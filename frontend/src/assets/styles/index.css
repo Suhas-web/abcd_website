@@ -1,0 +1,21 @@
+main {
+  min-height: 80vh;
+}
+
+.footer-main {
+position: sticky;
+  background-color: #272121;
+  color: white;
+  text-align: center;
+  padding: 1em;
+  bottom: 0;
+}
+
+.carousel-caption {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
