@@ -21,6 +21,7 @@ app.use(cookieParser());
 //Routes
 app.use("/api/users", userRoutes);
 
+const __dirname = path.resolve();
 if (process.env.NODE_ENV === "production") {
   //set static folder
   app.use(express.static(path.join(__dirname, "/frontend/build")));
