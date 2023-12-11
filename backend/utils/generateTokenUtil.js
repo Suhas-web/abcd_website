@@ -6,7 +6,7 @@ const generateToken = (res, userId) => {
     { userId }, //payload
     process.env.jwtSecret, //secret
     {
-      expiresIn: "7d", //options: expires in 7days
+      expiresIn: "7d", //options: expires in 7 days
     }
   );
 
