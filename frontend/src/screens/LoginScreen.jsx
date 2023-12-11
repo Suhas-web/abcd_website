@@ -1,40 +1,47 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Row, Col, Button, Form } from 'react-bootstrap';
 import { Link, useLocation, useNavigate} from 'react-router-dom'
 import FormContainer from '../components/FormContainer';
+import { useDispatch, useSelector } from 'react-redux'
+import { useLoginMutation } from '../slices/usersApiSlice'
+import { setCredentials } from '../slices/authSlice';
+import {toast} from 'react-toastify';
+import Loader from '../components/Loader'
 
 const LoginScreen = () => {
 
     const [contact, setContact] = useState("");
     const [password, setPassword] = useState("");
-    // const dispatch = useDispatch();
-    // const navigate = useNavigate();
 
-    // const {search} = useLocation();
-    // const sp = new URLSearchParams(search);
-    // const redirect = sp.get('redirect') || '/';
+    const { userInfo } = useSelector(state => state.auth)
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     if(userInfo){
-    //         navigate(redirect)
-    //     }
-    // }, [userInfo, redirect, navigate])
+    const {search} = useLocation();
+    const sp = new URLSearchParams(search);
+    const redirect = sp.get('redirect') || '/';
 
-    // const [login, {isLoading}] = useLoginMutation();
+    useEffect(() => {
+        if(userInfo){
+            navigate(redirect)
+        }
+    }, [userInfo, redirect, navigate])
+
+    const [login, {isLoading}] = useLoginMutation();
     const submitHandler = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         const res = await login({contact, password}).unwrap();
-    //         dispatch(setCredentials({...res}))
-    //     } catch (err) {
-    //         console.log(err?.data);
-    //         if(err?.data?.stack?.includes("Invalid contact")){
-    //             toast.error("Invalid contact or password. Please try again")
-    //         } else {
-    //             toast.error(err?.data?.message || err.error)
-    //         }
-    //     }  
+        e.preventDefault();
+        try {
+            const res = await login({contact, password}).unwrap();
+            dispatch(setCredentials({...res}))
+        } catch (err) {
+            console.log(err?.data);
+            if(err?.data?.stack?.includes("Invalid contact")){
+                toast.error("Invalid contact or password. Please try again")
+            } else {
+                toast.error(err?.data?.message || err.error)
+            }
+        }  
     }
 
   return (
@@ -58,11 +65,11 @@ const LoginScreen = () => {
                     </Form.Control>
                 </Form.Group>
                 <Button type='submit' variant='primary' className='mt-2 align-items-center' 
-                // disabled={isLoading}
+                disabled={isLoading}
                 >
                     Sign In
                 </Button>
-                {/* {isLoading && <Loader />} */}
+                {isLoading && <Loader />}
             </Form>
             <Row className='py-3 text-center'>
                 <Col>

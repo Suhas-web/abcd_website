@@ -6,19 +6,19 @@ import generateToken from "../utils/generateTokenUtil.js";
 // endpoint: POST /api/users/login
 // Access: public
 const authUser = errorHandler(async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email: email });
+  const { contact, password } = req.body;
+  const user = await User.findOne({ contact: contact });
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);
     res.json({
       _id: user._id,
       name: user.name,
-      email: user.email,
+      contact: user.contact,
       isAdmin: user.isAdmin,
     });
   } else {
     res.status(401);
-    throw new Error("Invalid email or email not found");
+    throw new Error("Invalid contact or contact not found");
   }
 });
 
@@ -26,19 +26,19 @@ const authUser = errorHandler(async (req, res) => {
 // endpoint: POST /api/users
 // Access: public
 const registerUser = errorHandler(async (req, res) => {
-  const { name, email, password } = req.body;
-  const userExist = await User.findOne({ email });
+  const { name, contact, password } = req.body;
+  const userExist = await User.findOne({ contact });
   if (userExist) {
     res.status(400);
     throw new Error("User already exists");
   }
-  const user = await User.create({ name, email, password });
+  const user = await User.create({ name, contact, password });
   if (user) {
     generateToken(res, user._id);
     res.status(201).json({
       _id: user._id,
       name: user.name,
-      email: user.email,
+      contact: user.contact,
       isAdmin: user.isAdmin,
     });
   } else {
@@ -67,7 +67,7 @@ const getUserProfile = errorHandler(async (req, res) => {
     res.status(200).json({
       _id: user._id,
       name: user.name,
-      email: user.email,
+      contact: user.contact,
       isAdmin: user.isAdmin,
     });
   } else {
@@ -83,7 +83,7 @@ const updateUserProfile = errorHandler(async (req, res) => {
   const user = await User.findById(req.body._id);
   if (user) {
     user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
+    user.contact = req.body.contact || user.contact;
     if (req.body.password) {
       user.password = req.body.password;
     }
@@ -92,7 +92,7 @@ const updateUserProfile = errorHandler(async (req, res) => {
       res.status(200).json({
         _id: updatedUser._id,
         name: updatedUser.name,
-        email: updatedUser.email,
+        contact: updatedUser.contact,
         isAdmin: updatedUser.isAdmin,
       });
     } catch (error) {
@@ -133,14 +133,14 @@ const updateUser = errorHandler(async (req, res) => {
   const user = await User.findById({ _id: req.body._id });
   if (user) {
     user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
+    user.contact = req.body.contact || user.contact;
     user.isAdmin = Boolean(req.body.isAdmin);
     try {
       const updatedUser = await user.save();
       res.status(200).json({
         _id: updatedUser._id,
         name: updatedUser.name,
-        email: updatedUser.email,
+        contact: updatedUser.contact,
         isAdmin: updatedUser.isAdmin,
       });
     } catch (err) {
