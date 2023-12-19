@@ -19,6 +19,8 @@ import UserProfileScreen from "./screens/UserProfileScreen";
 import UserListScreen from "./screens/admin/UserListScreen";
 import AdminRoute from "./components/AdminRoute";
 import UserEditScreen from "./screens/admin/UserEditScreen";
+import MembershipScreen from "./screens/MembershipScreen";
+import TrainingPlanScreen from "./screens/TrainingPlanScreen";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const router = createBrowserRouter(
@@ -36,6 +38,14 @@ const router = createBrowserRouter(
             element={<UserEditScreen />}
           ></Route>
         </Route>
+        <Route
+          path="/users/membershipPlan"
+          element={<MembershipScreen />}
+        ></Route>
+        <Route
+          path="/users/trainingPlan"
+          element={<TrainingPlanScreen />}
+        ></Route>
       </Route>
     </Route>
   )

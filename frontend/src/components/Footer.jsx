@@ -5,13 +5,7 @@ const Footer = () => {
 
     return (
         <footer className="footer-main">
-            <Container>
-                <Row>
-                    <Col className='text-center py-3'>
-                        <p>Copyright &copy; {currentYear} Adarsh Barbell Club - Dharwad</p>
-                    </Col>
-                </Row>
-            </Container>
+            <p className='text-center my-0 py-0'>Copyright &copy; {currentYear} Adarsh Barbell Club - Dharwad</p>
         </footer>
     )
 }

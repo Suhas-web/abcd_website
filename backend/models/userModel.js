@@ -21,6 +21,13 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    membershipPlan: {
+      type: String,
+    },
+    validTill: {
+      type: Date,
+      required: false,
+    },
   },
   { timestamps: true }
 );

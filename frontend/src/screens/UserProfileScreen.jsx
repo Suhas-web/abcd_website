@@ -41,7 +41,6 @@ const UserProfileScreen = () => {
             setName(userInfo.name);
             setContact(userInfo.contact);
         }
-    
     }, [userInfo.name, userInfo.contact, userInfo, setName, setContact])
 
   return (
@@ -55,14 +54,14 @@ const UserProfileScreen = () => {
                     <Form.Control type="text" value={name} onChange={(e) => setName(e.target.value)}></Form.Control>
                 </Form.Group>
                 <Form.Group name='contact' className="my-2"> 
-                    <Form.Label>Email</Form.Label>
+                    <Form.Label>Contact</Form.Label>
                     <Form.Control type="text" value={contact} onChange={(e) => setContact(e.target.value)}></Form.Control>
                 </Form.Group>
                 <Form.Group name='password' className="my-2">
                     <Form.Label>Password</Form.Label>
                     <Form.Control type="text" value={password} onChange={(e) => setPassword(e.target.value)}></Form.Control>
                 </Form.Group>
-                <Form.Group name='name' className="my-2">
+                <Form.Group name='confirmPassword' className="my-2">
                     <Form.Label>ConfirmPassword</Form.Label>
                     <Form.Control type="text" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}></Form.Control>
                 </Form.Group>

@@ -15,6 +15,8 @@ const authUser = errorHandler(async (req, res) => {
       name: user.name,
       contact: user.contact,
       isAdmin: user.isAdmin,
+      membershipPlan: user.membershipPlan,
+      validTill: user.validTill,
     });
   } else {
     res.status(401);
@@ -69,6 +71,8 @@ const getUserProfile = errorHandler(async (req, res) => {
       name: user.name,
       contact: user.contact,
       isAdmin: user.isAdmin,
+      membershipPlan: user.membershipPlan,
+      validTill: user.validTill,
     });
   } else {
     res.status(404);
@@ -135,6 +139,9 @@ const updateUser = errorHandler(async (req, res) => {
     user.name = req.body.name || user.name;
     user.contact = req.body.contact || user.contact;
     user.isAdmin = Boolean(req.body.isAdmin);
+    user.membershipPlan = user.membershipPlan;
+    user.validTill = user.validTill;
+
     try {
       const updatedUser = await user.save();
       res.status(200).json({
@@ -142,6 +149,8 @@ const updateUser = errorHandler(async (req, res) => {
         name: updatedUser.name,
         contact: updatedUser.contact,
         isAdmin: updatedUser.isAdmin,
+        membershipPlan: updateUser.membershipPlan,
+        validTill: updatedUser.validTill,
       });
     } catch (err) {
       res.status(500);

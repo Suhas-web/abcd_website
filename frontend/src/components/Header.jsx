@@ -1,5 +1,5 @@
 import React from 'react'
-import {Navbar, Container, NavDropdown, Nav} from 'react-bootstrap'
+import {Navbar, Container, NavDropdown, Nav, NavLink} from 'react-bootstrap'
 import {LinkContainer} from 'react-router-bootstrap'
 import abcd_logo from '../assets/abcd-logo.png'
 import { useSelector, useDispatch } from 'react-redux'
@@ -37,20 +37,27 @@ const Header = () => {
                     <Nav className='ms-auto'>
                         {userInfo && userInfo.isAdmin && 
                         <NavDropdown title='Admin' username="AdminMenu">
-                            <LinkContainer to='/admin/productList'>
-                                <NavDropdown.Item>Membership Plans</NavDropdown.Item>
-                            </LinkContainer>
                             <LinkContainer to='/admin/userList'>
                                 <NavDropdown.Item>Users</NavDropdown.Item>
                             </LinkContainer>
                         </NavDropdown>}
                         {userInfo ? 
-                        (<NavDropdown title={userInfo.name} id='username'>
+                        (<>
+                        <NavDropdown title="My Plan" id='username'>
+                            <LinkContainer isActive={true} to='/users/trainingPlan'>
+                                <NavDropdown.Item>Training Plan</NavDropdown.Item>
+                            </LinkContainer>
+                            <LinkContainer to='/users/memberShipPlan'>
+                                <NavDropdown.Item>Membership</NavDropdown.Item>
+                            </LinkContainer>
+                        </NavDropdown>
+                        <NavDropdown title={userInfo.name} id='username'>
                             <LinkContainer to='/users/profile'>
                                 <NavDropdown.Item>Profile</NavDropdown.Item>
                             </LinkContainer>
                             <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
-                        </NavDropdown>) :
+                        </NavDropdown>
+                        </>) :
                         <LinkContainer to='/login'>
                             <Nav.Link><FaUser/> Login</Nav.Link>
                         </LinkContainer>}
