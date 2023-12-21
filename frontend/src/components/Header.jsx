@@ -35,29 +35,28 @@ const Header = () => {
                 <Navbar.Toggle aria-controls='basic-nabar-nav'/>
                 <Navbar.Collapse id='basic-nabar-nav'>
                     <Nav className='ms-auto'>
-                        {userInfo && userInfo.isAdmin && 
+                        {userInfo && userInfo.isTrainingPlanAvailable &&
+                        <LinkContainer to="/users/trainingPlan">
+                            <Nav.Link>Training Plan</Nav.Link>
+                        </LinkContainer>} 
+
+                        {userInfo.isAdmin && 
                         <NavDropdown title='Admin' username="AdminMenu">
                             <LinkContainer to='/admin/userList'>
                                 <NavDropdown.Item>Users</NavDropdown.Item>
                             </LinkContainer>
+                            <LinkContainer to='/admin/uploadFiles'>
+                                <NavDropdown.Item>Upload Plan</NavDropdown.Item>
+                            </LinkContainer>
                         </NavDropdown>}
-                        {userInfo ? 
-                        (<>
-                        <NavDropdown title="My Plan" id='username'>
-                            <LinkContainer isActive={true} to='/users/trainingPlan'>
-                                <NavDropdown.Item>Training Plan</NavDropdown.Item>
-                            </LinkContainer>
-                            <LinkContainer to='/users/memberShipPlan'>
-                                <NavDropdown.Item>Membership</NavDropdown.Item>
-                            </LinkContainer>
-                        </NavDropdown>
-                        <NavDropdown title={userInfo.name} id='username'>
+
+                        {userInfo ? <NavDropdown title={userInfo.name} id='username'>
                             <LinkContainer to='/users/profile'>
                                 <NavDropdown.Item>Profile</NavDropdown.Item>
                             </LinkContainer>
                             <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
                         </NavDropdown>
-                        </>) :
+                        :
                         <LinkContainer to='/login'>
                             <Nav.Link><FaUser/> Login</Nav.Link>
                         </LinkContainer>}

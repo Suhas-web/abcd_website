@@ -54,7 +54,7 @@ const RegisterScreen = () => {
                     </Form.Control>
                 </Form.Group>
                 <Form.Group controlId='contact' className='my-3'>
-                    <Form.Label>Email Address</Form.Label>
+                    <Form.Label>Email Address/Phone Number</Form.Label>
                     <Form.Control type="text" placeholder="Enter contact" 
                     value={contact} 
                     onChange={(e) => setContact(e.target.value)} required>

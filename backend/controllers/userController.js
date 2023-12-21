@@ -17,6 +17,7 @@ const authUser = errorHandler(async (req, res) => {
       isAdmin: user.isAdmin,
       membershipPlan: user.membershipPlan,
       validTill: user.validTill,
+      isTrainingPlanAvailable: user.isTrainingPlanAvailable,
     });
   } else {
     res.status(401);

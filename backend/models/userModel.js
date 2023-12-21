@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema(
     membershipPlan: {
       type: String,
     },
+    isTrainingPlanAvailable: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     validTill: {
       type: Date,
       required: false,
