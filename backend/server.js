@@ -4,6 +4,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 dotenv.config();
 import userRoutes from "./routes/userRoutes.js";
+import planRoutes from "./routes/planRoutes.js";
 import connection from "./config/db.js";
 connection();
 import { notFound, customErrorHandler } from "./middleware/errorMiddleware.js";
@@ -20,6 +21,7 @@ app.use(cookieParser());
 
 //Routes
 app.use("/api/users", userRoutes);
+app.use("/api/plans", planRoutes);
 
 const __dirname = path.resolve();
 if (process.env.NODE_ENV === "production") {

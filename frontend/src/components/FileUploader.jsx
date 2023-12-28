@@ -3,13 +3,12 @@ import { useUploadPlanMutation } from '../slices/plansApiSlice';
 import {toast} from 'react-toastify'
 import { Spinner } from 'react-bootstrap';
 
-function FileUploader() {
+function FileUploader({userName}) {
   const [uploadFile, { isLoading, data, error }] = useUploadPlanMutation();
   const [selectedFile, setSelectedFile] = useState();
 
   const handleFileChange = (e) => {
     const selectedFile = {
-      name: e.target.files[0].name + "___" + Date.now(),
       data: e.target.files[0],
     };
     setSelectedFile(selectedFile);
@@ -22,14 +21,12 @@ function FileUploader() {
     } else {
       let formData = new FormData();
       formData.append("file", selectedFile.data);
-      console.log(formData);
+      formData.append("userName", userName)
       const res = await uploadFile(formData);
-      console.log(res);
     }
   };
 
   const handleErrorUpload = (error) => {
-    
     console.log(error);
   }
 

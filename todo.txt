@@ -1,2 +1,4 @@
+Google cloud file upload - https://protocoderspoint.com/nodejs-script-to-upload-file-to-google-drive-using-googleapis/
+https://youtu.be/bkaQTLCBBeo?si=ggJvZVu824MFlqfp
 OTP verification to email and phone 
 Validation on Register Screen
