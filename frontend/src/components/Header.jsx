@@ -35,7 +35,7 @@ const Header = () => {
                 <Navbar.Toggle aria-controls='basic-nabar-nav'/>
                 <Navbar.Collapse id='basic-nabar-nav'>
                     <Nav className='ms-auto'>
-                        {userInfo && userInfo.isTrainingPlanAvailable &&
+                        {userInfo && !userInfo.isAdmin &&
                         <LinkContainer to="/users/trainingPlan">
                             <Nav.Link>Training Plan</Nav.Link>
                         </LinkContainer>} 

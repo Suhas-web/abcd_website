@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {Button, Form} from 'react-bootstrap'
+import {Button, Dropdown, Form} from 'react-bootstrap'
 import FormContainer from '../../components/FormContainer';
 import Loader from '../../components/Loader'
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -12,6 +12,7 @@ const UserEditScreen = () => {
     const [name, setName] = useState('');
     const [contact, setContact] = useState('');
     const [isAdmin, setIsAdmin] = useState('');
+    const [membershipPlan, setMembershipPlan] = useState('');
     const {data: user, error, isLoading} = useGetUserProfilesDetailQuery(userId);
     const [updateUser, {isLoading: loadingUpdateUser}] = useUpdateUserProfileMutation();
     const navigate = useNavigate();
@@ -23,6 +24,7 @@ const UserEditScreen = () => {
                 name,
                 contact,
                 isAdmin,
+                membershipPlan,
             };
         const result = await updateUser(updatedUser).unwrap();
         if(result.error){
@@ -40,6 +42,7 @@ const UserEditScreen = () => {
             setName(user.name);
             setContact(user.contact);
             setIsAdmin(user.isAdmin);
+            setMembershipPlan(user.membershipPlan);
         }
     }, [user])
 
@@ -66,6 +69,15 @@ const UserEditScreen = () => {
                 value={contact} 
                 onChange={(e) => setContact(e.target.value)} required></Form.Control>
             </Form.Group >
+        <Form.Group controlId='activePlan' className='my-2' onChange={(e) => setMembershipPlan(e.target.value)}>
+            <Form.Label>Membership Plan</Form.Label>
+            <Form.Select aria-label="Default select">
+                <option>{membershipPlan}</option>
+                <option value="CLASSIC">CLASSIC</option>
+                <option value="PREMIUM">PREMIUM</option>
+                <option value="NONE">NONE</option>
+            </Form.Select>
+        </Form.Group>
             <Form.Group controlId='isAdmin' className='my-2'>
                 <Form.Check type="checkbox" 
                 label='isAdmin'

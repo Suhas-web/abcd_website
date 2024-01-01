@@ -23,6 +23,12 @@ function FileUploader({userName}) {
       formData.append("file", selectedFile.data);
       formData.append("userName", userName)
       const res = await uploadFile(formData);
+      if(res && res.data && res.data.isError == false){
+        toast.success("File uploaded to google drive")
+      } else {
+        toast.error("Error uploading files. Try again")
+      }
+      console.log(res);
     }
   };
 

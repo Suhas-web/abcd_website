@@ -1,12 +1,9 @@
 import errorHandler from "../middleware/errorHandler.js";
-import fs from "fs";
 import { google } from "googleapis";
 import apiKey from "../apiKey.json" assert { type: "json" };
 import { Readable } from "stream";
 const SCOPE = ["https://www.googleapis.com/auth/drive"];
 const parentId = ["1VrfmDyqxcI5xrPxq_sEZrcZ_7Cep1IZV"];
-import pkg from "pdfkit";
-const { PDFKit } = pkg;
 
 //FUNCTIONS START
 // A Function that can provide access to google drive api
@@ -23,11 +20,11 @@ const authorize = async () => {
 
 // A Function that will upload the desired file to google drive folder
 async function uploadFile(authClient, request) {
-  const drive = google.drive({ version: "v3", auth: auth });
+  const drive = google.drive({ version: "v3", auth: authClient });
   const buffer = await request.file.buffer;
   return new Promise((resolve, rejected) => {
     var fileMetaData = {
-      name: request.body.userName,
+      name: `${request.body.userName}.pdf`,
       parents: parentId,
     };
     drive.files.create(
@@ -35,7 +32,7 @@ async function uploadFile(authClient, request) {
         resource: fileMetaData,
         media: {
           body: Readable.from(buffer), // files that will get uploaded
-          mimeType: "application/vnd.ms-excel",
+          mimeType: "application/pdf",
         },
         fields: "id",
       },
@@ -53,20 +50,19 @@ async function getFileId(auth, fileName) {
   const drive = google.drive({ version: "v3", auth: auth });
   const res = await drive.files.list({
     auth: auth,
-    q: `name='${fileName}' and '${parentId}' in parents and trashed = false`,
+    q: `name='${fileName}.pdf' and '${parentId}' in parents and trashed = false`,
     fields:
       "files(id, name, mimeType, parents, webViewLink, size, createdTime)",
     orderBy: "createdTime desc",
   });
 
+  //    q: `name='${fileName}' and '${parentId}' in parents and trashed = false`,
+
   if (res.data.files.length === 0) {
     console.log("No files found.");
     return null;
   } else {
-    // res.data.files.map((file) => {
-    //   console.log("File: ", file);
-    // });
-    // console.log("files[0]", res.data.files[0]);
+    res.data.files.map((file) => console.log(file));
     return res.data.files[0];
   }
 }
@@ -101,41 +97,32 @@ const getPlan = errorHandler(async (req, res) => {
   try {
     const auth = await authorize();
     const drive = google.drive({ version: "v3", auth: auth });
-    const file = await getFileId(auth, "Suhas4545");
+    console.log("req.params.id", req.params.id);
+    const file = await getFileId(auth, req.params.id);
     if (file) {
       console.log("filesResponse ID", file);
-      if (file) {
-        console.log("File ID: ", file.id);
-        const driveResponse = await drive.files.get(
-          {
-            fileId: file.id,
-            alt: "media",
-            auth: auth,
-          },
-          { responseType: "stream" }
-        );
+      const driveResponse = await drive.files.get(
+        {
+          fileId: file.id,
+          alt: "media",
+          auth: auth,
+        },
+        { responseType: "stream" }
+      );
 
-        // // Create a new PDFDocument
-        // const doc = new PDFKit.PDFDocument();
-
-        // // Pipe its output to the response
-        // doc.pipe(res);
-
-        driveResponse.data
-          .on("end", () => {
-            console.log("Done downloading file.");
-          })
-          .on("error", (err) => {
-            console.error("Error downloading file.");
-          })
-          .pipe(res); // pipe the stream data to the PDF document
-
-        res.status(200);
-      } else {
-        return res
-          .status(404)
-          .json({ message: "No files found", isError: false });
-      }
+      driveResponse.data
+        .on("end", () => {
+          console.log("Done downloading file.");
+        })
+        .on("error", (err) => {
+          console.error("Error downloading file.");
+        })
+        .pipe(res); // pipe the stream data to the PDF document
+      res.status(200);
+    } else {
+      return res
+        .status(404)
+        .json({ message: "No files found", isError: false });
     }
   } catch (error) {
     console.log(error);

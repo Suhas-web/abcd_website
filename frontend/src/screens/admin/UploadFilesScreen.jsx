@@ -21,6 +21,7 @@ const UserListScreen = () => {
           <tr>
             <th>UserId</th>
             <th>Name</th>
+            <th>Plan</th>
             <th><FaFileUpload></FaFileUpload>Upload Training Plan</th>
             <th></th>
           </tr>
@@ -30,6 +31,7 @@ const UserListScreen = () => {
             <tr key={user._id}>
               <td>{user._id}</td>
               <td>{user.name}</td>
+              <td>{user.membershipPlan}</td>
               <td><FileUploader userName={user._id}/></td>
             </tr>
           ))}

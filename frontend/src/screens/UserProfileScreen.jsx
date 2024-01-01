@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react"
-import { Button, Col, Form, Row, Table } from "react-bootstrap"
+import { Button, Col, Form, Row } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
 import { toast } from "react-toastify"
 import { useUpdateProfileMutation } from "../slices/usersApiSlice"
 import { setCredentials } from "../slices/authSlice"
-import Loader from "../components/Loader"
-import Message from "../components/Message"
-import {FaTimes} from 'react-icons/fa'
-import {LinkContainer} from 'react-router-bootstrap'
 import FormContainer from "../components/FormContainer"
+import MembershipScreen from './MembershipScreen'
 
 const UserProfileScreen = () => {
     
@@ -68,6 +65,10 @@ const UserProfileScreen = () => {
                 <Button type="submit" className="my-2" variant="primary">Submit</Button> 
             </Form>
         </Col>
+        {userInfo && !userInfo.isAdmin &&
+        <Col md={4}>
+            <MembershipScreen/>
+        </Col>}
     </Row>
     </FormContainer>
     </div>

@@ -115,7 +115,7 @@ const updateUserProfile = errorHandler(async (req, res) => {
 // endpoint: GET /api/users
 // Access: private/admin
 const getUsers = errorHandler(async (req, res) => {
-  res.status(200).json(await User.find({}));
+  res.status(200).json(await User.find({}, { password: 0 }));
 });
 
 // desc: GET user by id
@@ -140,7 +140,7 @@ const updateUser = errorHandler(async (req, res) => {
     user.name = req.body.name || user.name;
     user.contact = req.body.contact || user.contact;
     user.isAdmin = Boolean(req.body.isAdmin);
-    user.membershipPlan = user.membershipPlan;
+    user.membershipPlan = req.body.membershipPlan || user.membershipPlan;
     user.validTill = user.validTill;
 
     try {

@@ -37,8 +37,9 @@ const UserListScreen = () => {
             <th>UserId</th>
             <th>NAME</th>
             <th>Contact</th>
+            <th>Active Plan</th>
             <th>isAdmin</th>
-            <th></th>
+            <th>Edit Profile</th>
           </tr>
         </thead>
         <tbody>
@@ -47,6 +48,7 @@ const UserListScreen = () => {
               <td>{user._id}</td>
               <td>{user.name}</td>
               <td>{user.contact}</td>
+              <td>{user.membershipPlan}</td>
               <td>{user.isAdmin ? <FaCheck color='green'></FaCheck> : <FaTimes color='red'></FaTimes>}</td>
               <td>
                 <LinkContainer to={`/admin/user/${user._id}/edit`}>

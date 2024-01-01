@@ -14,8 +14,8 @@ const MembershipScreen = () => {
     }, [userInfo.setValidTill, userInfo.membershipPlan, userInfo])
   return (
     <Container>
-    <h1 className='mt-2'>Membership details</h1>
-    {membershipPlan && <p>Membership Plan: {membershipPlan}</p>}
+    <h3 className='mt-2'>Membership details</h3>
+    {membershipPlan && <p>Active Plan: {membershipPlan}</p>}
     {validTill && <p>Plan expiry: {validTill}</p>}
     </Container>
   )

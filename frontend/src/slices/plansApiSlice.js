@@ -16,13 +16,17 @@ const plansApiSlice = apiSlice.injectEndpoints({
         url: `${PLANS_URL}/retrieveFile/${id}`,
         method: "POST",
         responseHandler: async (response) => {
-          const blob = await response.blob();
-          console.log("blob", blob);
-          const unit8 = new Response(blob)
-            .arrayBuffer()
-            .then((buffer) => new Uint8Array(buffer));
-          console.log("unit8", await unit8);
-          return await unit8;
+          console.log("response", response);
+          if (response.status === 200) {
+            const res = await response;
+            const blob = await res.blob();
+            if (blob) {
+              const unit8 = new Response(blob)
+                .arrayBuffer()
+                .then((buffer) => new Uint8Array(buffer));
+              return await unit8;
+            }
+          }
         },
       }),
     }),
