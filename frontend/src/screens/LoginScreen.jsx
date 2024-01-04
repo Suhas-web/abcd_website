@@ -11,7 +11,7 @@ import Loader from '../components/Loader'
 
 const LoginScreen = () => {
 
-    const [contact, setContact] = useState("");
+    const [mobile, setMobile] = useState("");
     const [password, setPassword] = useState("");
 
     const { userInfo } = useSelector(state => state.auth)
@@ -32,12 +32,12 @@ const LoginScreen = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
-            const res = await login({contact, password}).unwrap();
+            const res = await login({mobile, password}).unwrap();
             dispatch(setCredentials({...res}))
         } catch (err) {
             console.log(err?.data);
-            if(err?.data?.stack?.includes("Invalid contact")){
-                toast.error("Invalid contact or password. Please try again")
+            if(err?.data?.stack?.includes("Invalid mobile number")){
+                toast.error("Invalid mobile number or password. Please try again")
             } else {
                 toast.error(err?.data?.message || err.error)
             }
@@ -50,11 +50,11 @@ const LoginScreen = () => {
         <Col md={8} xs={12}>
             <h1>Login</h1>
             <Form onSubmit={submitHandler}>
-                <Form.Group controlId='contact' className='my-3'>
-                    <Form.Label>Email/Phone Number</Form.Label>
-                    <Form.Control type="text" placeholder="Enter contact" 
-                    value={contact} 
-                    onChange={(e) => setContact(e.target.value)} required>
+                <Form.Group controlId='mobile' className='my-3'>
+                    <Form.Label>Mobile Number</Form.Label>
+                    <Form.Control type="text" placeholder="Enter mobile number" 
+                    value={mobile} 
+                    onChange={(e) => setMobile(e.target.value)} required>
                     </Form.Control>
                 </Form.Group>
                 <Form.Group controlId='password' className='mt-2'>

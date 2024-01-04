@@ -36,7 +36,7 @@ const UserListScreen = () => {
           <tr>
             <th>UserId</th>
             <th>NAME</th>
-            <th>Contact</th>
+            <th>Mobile Number</th>
             <th>Active Plan</th>
             <th>isAdmin</th>
             <th>Edit Profile</th>
@@ -47,7 +47,7 @@ const UserListScreen = () => {
             <tr key={user._id}>
               <td>{user._id}</td>
               <td>{user.name}</td>
-              <td>{user.contact}</td>
+              <td>{user.mobile}</td>
               <td>{user.membershipPlan}</td>
               <td>{user.isAdmin ? <FaCheck color='green'></FaCheck> : <FaTimes color='red'></FaTimes>}</td>
               <td>

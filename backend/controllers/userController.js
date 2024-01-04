@@ -6,14 +6,15 @@ import generateToken from "../utils/generateTokenUtil.js";
 // endpoint: POST /api/users/login
 // Access: public
 const authUser = errorHandler(async (req, res) => {
-  const { contact, password } = req.body;
-  const user = await User.findOne({ contact: contact });
+  const { mobile, password } = req.body;
+  const user = await User.findOne({ mobile: mobile });
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);
     res.json({
       _id: user._id,
       name: user.name,
-      contact: user.contact,
+      mobile: user.mobile,
+      email: user.email,
       isAdmin: user.isAdmin,
       membershipPlan: user.membershipPlan,
       validTill: user.validTill,
@@ -21,7 +22,7 @@ const authUser = errorHandler(async (req, res) => {
     });
   } else {
     res.status(401);
-    throw new Error("Invalid contact or contact not found");
+    throw new Error("Invalid mobile number ");
   }
 });
 
@@ -29,19 +30,20 @@ const authUser = errorHandler(async (req, res) => {
 // endpoint: POST /api/users
 // Access: public
 const registerUser = errorHandler(async (req, res) => {
-  const { name, contact, password } = req.body;
-  const userExist = await User.findOne({ contact });
+  const { name, mobile, email, password } = req.body;
+  const userExist = await User.findOne({ mobile });
   if (userExist) {
     res.status(400);
     throw new Error("User already exists");
   }
-  const user = await User.create({ name, contact, password });
+  const user = await User.create({ name, mobile, email, password });
   if (user) {
     generateToken(res, user._id);
     res.status(201).json({
       _id: user._id,
       name: user.name,
-      contact: user.contact,
+      mobile: user.mobile,
+      email: user.email,
       isAdmin: user.isAdmin,
     });
   } else {
@@ -70,7 +72,8 @@ const getUserProfile = errorHandler(async (req, res) => {
     res.status(200).json({
       _id: user._id,
       name: user.name,
-      contact: user.contact,
+      mobile: user.mobile,
+      email: user.email,
       isAdmin: user.isAdmin,
       membershipPlan: user.membershipPlan,
       validTill: user.validTill,
@@ -88,7 +91,8 @@ const updateUserProfile = errorHandler(async (req, res) => {
   const user = await User.findById(req.body._id);
   if (user) {
     user.name = req.body.name || user.name;
-    user.contact = req.body.contact || user.contact;
+    user.mobile = req.body.mobile || user.mobile;
+    user.email = req.body.email || user.email;
     if (req.body.password) {
       user.password = req.body.password;
     }
@@ -97,7 +101,8 @@ const updateUserProfile = errorHandler(async (req, res) => {
       res.status(200).json({
         _id: updatedUser._id,
         name: updatedUser.name,
-        contact: updatedUser.contact,
+        mobile: updatedUser.mobile,
+        email: updateUser.email,
         isAdmin: updatedUser.isAdmin,
       });
     } catch (error) {
@@ -138,7 +143,8 @@ const updateUser = errorHandler(async (req, res) => {
   const user = await User.findById({ _id: req.body._id });
   if (user) {
     user.name = req.body.name || user.name;
-    user.contact = req.body.contact || user.contact;
+    user.mobile = req.body.mobile || user.mobile;
+    user.email = req.body.email || user.email;
     user.isAdmin = Boolean(req.body.isAdmin);
     user.membershipPlan = req.body.membershipPlan || user.membershipPlan;
     user.validTill = user.validTill;
@@ -148,7 +154,8 @@ const updateUser = errorHandler(async (req, res) => {
       res.status(200).json({
         _id: updatedUser._id,
         name: updatedUser.name,
-        contact: updatedUser.contact,
+        mobile: updatedUser.mobile,
+        email: updateUser.email,
         isAdmin: updatedUser.isAdmin,
         membershipPlan: updateUser.membershipPlan,
         validTill: updatedUser.validTill,

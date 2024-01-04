@@ -11,7 +11,8 @@ import {toast} from 'react-toastify';
 const RegisterScreen = () => {
 
     const [name, setName] = useState("");
-    const [contact, setContact] = useState("");
+    const [mobile, setMobile] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -33,7 +34,7 @@ const RegisterScreen = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
-            const res = await register({name, contact, password}).unwrap();
+            const res = await register({name, mobile, email, password}).unwrap();
             dispatch(setCredentials({...res}))
         } catch (err) {
             console.log(err?.data);
@@ -53,11 +54,18 @@ const RegisterScreen = () => {
                     onChange={(e) => setName(e.target.value)} required>
                     </Form.Control>
                 </Form.Group>
-                <Form.Group controlId='contact' className='my-3'>
-                    <Form.Label>Email Address/Phone Number</Form.Label>
-                    <Form.Control type="text" placeholder="Enter contact" 
-                    value={contact} 
-                    onChange={(e) => setContact(e.target.value)} required>
+                <Form.Group controlId='Mobile Number' className='my-3'>
+                    <Form.Label>Mobile Number</Form.Label>
+                    <Form.Control type="text" placeholder="Enter Mobile Number" 
+                    value={mobile} 
+                    onChange={(e) => setMobile(e.target.value)} required>
+                    </Form.Control>
+                </Form.Group>
+                <Form.Group controlId='email' className='my-3'>
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control type="text" placeholder="Enter email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)}>
                     </Form.Control>
                 </Form.Group>
                 <Form.Group controlId='password' className='mt-2'>

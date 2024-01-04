@@ -46,7 +46,7 @@ const [getFile, {isLoading}] = useDownloadPlanMutation();
       </Document>
       </Container>) :
       <Container className='mt-3'>
-       <h2>You need to have an active gym membership to get training plan</h2>
+       <h2>Gym membership not found</h2>
        <h3>Already have a active membership? Contact the admin to register your membership plan</h3>
       </Container>
       )

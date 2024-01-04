@@ -10,7 +10,8 @@ import { useGetUserProfilesDetailQuery, useUpdateUserProfileMutation } from '../
 const UserEditScreen = () => {
     const {id: userId} = useParams();
     const [name, setName] = useState('');
-    const [contact, setContact] = useState('');
+    const [mobile, setMobile] = useState('');
+    const [email, setEmail] = useState('');
     const [isAdmin, setIsAdmin] = useState('');
     const [membershipPlan, setMembershipPlan] = useState('');
     const {data: user, error, isLoading} = useGetUserProfilesDetailQuery(userId);
@@ -22,7 +23,8 @@ const UserEditScreen = () => {
         const updatedUser = {
                 _id: userId,
                 name,
-                contact,
+                mobile,
+                email,
                 isAdmin,
                 membershipPlan,
             };
@@ -40,7 +42,8 @@ const UserEditScreen = () => {
     useEffect(()=>{
         if(user){
             setName(user.name);
-            setContact(user.contact);
+            setMobile(user.mobile);
+            setEmail(user.email);
             setIsAdmin(user.isAdmin);
             setMembershipPlan(user.membershipPlan);
         }
@@ -62,22 +65,29 @@ const UserEditScreen = () => {
                 value={name} 
                 onChange={(e) => setName(e.target.value)} required></Form.Control>
             </Form.Group>
-            <Form.Group  controlId='contact' className='my-2'>
+            <Form.Group  controlId='mobile' className='my-2'>
+                <Form.Label>Mobile Number</Form.Label>
+                <Form.Control type="text" 
+                placeholder="Enter mobile number" 
+                value={mobile} 
+                onChange={(e) => setMobile(e.target.value)} required></Form.Control>
+            </Form.Group >
+            <Form.Group  controlId='emai' className='my-2'>
                 <Form.Label>Email</Form.Label>
                 <Form.Control type="text" 
-                placeholder="Enter contact" 
-                value={contact} 
-                onChange={(e) => setContact(e.target.value)} required></Form.Control>
+                placeholder="Enter email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} required></Form.Control>
             </Form.Group >
-        <Form.Group controlId='activePlan' className='my-2' onChange={(e) => setMembershipPlan(e.target.value)}>
-            <Form.Label>Membership Plan</Form.Label>
-            <Form.Select aria-label="Default select">
-                <option>{membershipPlan}</option>
-                <option value="CLASSIC">CLASSIC</option>
-                <option value="PREMIUM">PREMIUM</option>
-                <option value="NONE">NONE</option>
-            </Form.Select>
-        </Form.Group>
+            <Form.Group controlId='activePlan' className='my-2' onChange={(e) => setMembershipPlan(e.target.value)}>
+                <Form.Label>Membership Plan</Form.Label>
+                <Form.Select aria-label="Default select">
+                    <option>{membershipPlan}</option>
+                    <option value="CLASSIC">CLASSIC</option>
+                    <option value="PREMIUM">PREMIUM</option>
+                    <option value="NONE">NONE</option>
+                </Form.Select>
+            </Form.Group>
             <Form.Group controlId='isAdmin' className='my-2'>
                 <Form.Check type="checkbox" 
                 label='isAdmin'
