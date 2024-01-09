@@ -125,7 +125,7 @@ const UserProfileScreen = () => {
                     <Form.Label>Enter OTP</Form.Label>
                     <Form.Control type="text" onChange={(e) => setOTP(e.target.value)}></Form.Control>
                 </Form.Group>
-                <Button type="submit" className="my-2" variant="primary">Verify OTP</Button> 
+                <Button type="submit" className="my-2" variant="primary" disabled={!isOtpSent}>Verify OTP</Button> 
             </Form>}
             </Container>
             </Col>
