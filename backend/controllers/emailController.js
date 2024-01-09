@@ -1,63 +1,134 @@
-import {
-  AccountApi,
-  AccountApiApiKeys,
-  TransactionalEmailsApi,
-  SendSmtpEmail,
-} from "@getbrevo/brevo";
+import { google } from "googleapis";
+import nodemailer from "nodemailer";
 import errorHandler from "../middleware/errorHandler.js";
-import pkg from "@getbrevo/brevo";
-const { SibApiV3Sdk } = pkg;
-const API_KEY = process.env.BREVO_API_KEY;
+import apiKey from "../apiKey.json" assert { type: "json" };
+const SCOPE = ["https://www.googleapis.com/auth/gmail.send"];
 
-const setup = errorHandler(async (req, res) => {
-  let apiInstance = new AccountApi();
-  apiInstance.setApiKey(AccountApiApiKeys.apiKey, API_KEY);
-  apiInstance.getAccount().then(
-    function (data) {
-      console.log(
-        "API called successfully. Returned data: " + JSON.stringify(data)
-      );
-      res.send(data);
+// const SERVICE_ACCOUNT_EMAIL = "YOUR_SERVICE_ACCOUNT_EMAIL";
+// const PRIVATE_KEY = "YOUR_PRIVATE_KEY"; // This should be the private key from your service account credentials
+
+// const authorize = async () => {
+//   const jwtClient = new google.auth.JWT(
+//     apiKey.client_email,
+//     null,
+//     apiKey.private_key,
+//     SCOPE
+//   );
+//   await jwtClient.authorize();
+//   return jwtClient;
+// };
+
+// // const jwtClient = new google.auth.JWT({
+// //   email: SERVICE_ACCOUNT_EMAIL,
+// //   key: PRIVATE_KEY,
+// //   scopes: ["https://www.googleapis.com/auth/gmail.send"], // Scope for sending emails
+// // });
+// const sendEmail = errorHandler(async (req, res) => {
+//   authorize().then(function (err, tokens) {
+//     if (err) {
+//       console.log(err);
+//       return;
+//     }
+
+//     const transporter = nodemailer.createTransport({
+//       service: "gmail",
+//       auth: {
+//         type: "OAuth2",
+//         user: SERVICE_ACCOUNT_EMAIL,
+//         accessToken: tokens.access_token,
+//       },
+//     });
+
+//     const mailOptions = {
+//       from: `SENDER_NAME <${apiKey.client_email}>`,
+//       to: "smssuhas2@gmail.com",
+//       subject: "Hello from Node.js",
+//       text: "Hello world!",
+//       html: "<p>Hello world!</p>",
+//     };
+
+//     transporter.sendMail(mailOptions, function (error, info) {
+//       if (error) {
+//         console.log(error);
+//         res.status(500).send("Send email fail");
+//       } else {
+//         console.log("Email sent: " + info.response);
+//         res.status(200).send("Send email success");
+//       }
+//     });
+//   });
+// });
+
+// const sendEmail = errorHandler(async (req, res) => {
+//   try {
+//     const jwtClient = await authorize();
+//     const tokens = await jwtClient.getAccessToken();
+//     console.log("Token success", tokens);
+//     const transporter = nodemailer.createTransport({
+//       service: "gmail",
+//       auth: {
+//         // type: "OAuth2",
+//         user: apiKey.client_email,
+//         accessToken: tokens.token,
+//       },
+//     });
+//     console.log("transporter", transporter);
+//     const mailOptions = {
+//       from: apiKey.client_email,
+//       to: "smsuhas2@gmail.com",
+//       subject: "Hello from Node.js",
+//       text: "Hello world!",
+//     };
+//     console.log("Mail options", mailOptions);
+//     transporter.sendMail(mailOptions, function (error, info) {
+//       if (error) {
+//         console.log(error);
+//         res.status(500).send("Send email fail");
+//       } else {
+//         console.log("Email sent: " + info.response);
+//         res.status(200).send("Send email success");
+//       }
+//     });
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
+
+const sendEmail = errorHandler(async (req, res) => {
+  const { emailBody, receivers, sub } = req.body;
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    auth: {
+      user: process.env.USER_EMAIL,
+      pass: process.env.EMAIL_APP_PASSWORD,
     },
-    function (error) {
-      console.error(error);
-      res.send(error);
-    }
-  );
-});
-
-const sendMail = errorHandler(async (req, res) => {
-  let apiInstance = new TransactionalEmailsApi();
-
-  let apiKey = apiInstance.authentications["apiKey"];
-  apiKey.apiKey = process.env.BREVO_API_KEY_SMTP;
-
-  let sendSmtpEmail = new SendSmtpEmail();
-
-  sendSmtpEmail.subject = "Test";
-  sendSmtpEmail.htmlContent =
-    "<html><body><h1>This is my first transactional email {{params.parameter}}</h1></body></html>";
-  sendSmtpEmail.sender = { name: "John Doe", email: "smssuhas2@gmail.com" };
-  sendSmtpEmail.to = [{ email: "smsuhas2@gmail.com", name: "Jane Doe" }];
-  // sendSmtpEmail.cc = [{ email: "example2@example2.com", name: "Janice Doe" }];
-  // sendSmtpEmail.bcc = [{ name: "John Doe", email: "example@example.com" }];
-  sendSmtpEmail.replyTo = { email: "replyto@domain.com", name: "John Doe" };
-  sendSmtpEmail.headers = { "Some-Custom-Name": "unique-id-1234" };
-  sendSmtpEmail.params = {
-    parameter: "My param value",
-    subject: "New Subject",
+  });
+  const mailOptions = {
+    from: {
+      name: "ABCD",
+      address: process.env.USER_EMAIL,
+    },
+    to: receivers,
+    subject: sub,
+    text: emailBody,
   };
 
-  apiInstance.sendTransacEmail(sendSmtpEmail).then(
-    function (data) {
-      console.log("Sent email. Returned data: " + JSON.stringify(data));
-      res.send(data);
-    },
-    function (error) {
-      console.error(error);
-      res.send(error);
+  const sendMail = async (transporter, mailOptions) => {
+    try {
+      const mailResponse = await transporter.sendMail(mailOptions);
+      return mailResponse;
+    } catch (error) {
+      console.log(error);
     }
-  );
-});
+  };
 
-export { setup, sendMail };
+  const resp = await sendMail(transporter, mailOptions);
+  console.log(resp);
+  if (resp) {
+    res.send("Send email success");
+  } else {
+    res.status(500).send("Send email fail");
+  }
+});
+export { sendEmail };

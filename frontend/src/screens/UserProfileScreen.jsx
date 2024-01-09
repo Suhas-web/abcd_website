@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Button, Col, Form, Row } from "react-bootstrap"
+import { Button, Col, Container, Form, Row } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
 import { toast } from "react-toastify"
 import { useUpdateProfileMutation } from "../slices/usersApiSlice"
@@ -112,7 +112,14 @@ const UserProfileScreen = () => {
                 </Form.Group>
                 <Button type="submit" className="my-2" variant="primary" disabled={!isOtpVerified || !isOtpSent}>Update profile</Button> 
             </Form>
-            {!isOtpVerified && <Form onSubmit={verifyOTPHandler}>
+        </Col>
+        
+        <Col className="mt-3" md={4}>
+            {userInfo && !userInfo.isAdmin && userInfo.membershipPlan &&
+            <MembershipScreen/>}
+            <Container>
+                {!isOtpVerified && <Form onSubmit={verifyOTPHandler}>
+                <h3>Verify OTP to update profile</h3>
                 <Button onClick={sendOTPHandler} className="my-2" variant="primary">Send OTP</Button>
                 <Form.Group name='verifyOTP' className="my-2">
                     <Form.Label>Enter OTP</Form.Label>
@@ -120,11 +127,8 @@ const UserProfileScreen = () => {
                 </Form.Group>
                 <Button type="submit" className="my-2" variant="primary">Verify OTP</Button> 
             </Form>}
-        </Col>
-        {userInfo && !userInfo.isAdmin && userInfo.membershipPlan &&
-        <Col md={4}>
-            <MembershipScreen/>
-        </Col>}
+            </Container>
+            </Col>
     </Row>
     </FormContainer>
     </div>
