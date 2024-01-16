@@ -1,9 +1,9 @@
 import React from "react";
 import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  RouterProvider,
+	createBrowserRouter,
+	createRoutesFromElements,
+	Route,
+	RouterProvider,
 } from "react-router-dom";
 import store from "./store";
 import PrivateRoute from "./components/PrivateRoute";
@@ -22,41 +22,43 @@ import UserEditScreen from "./screens/admin/UserEditScreen";
 import MembershipScreen from "./screens/MembershipScreen";
 import TrainingPlanScreen from "./screens/TrainingPlanScreen";
 import UploadFilesScreen from "./screens/admin/UploadFilesScreen";
+import ResetScreen from "./screens/ResetScreen";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<App />}>
-      <Route index element={<HomePage />}></Route>
-      <Route path="/login" element={<LoginScreen />}></Route>
-      <Route path="/register" element={<RegisterScreen />}></Route>
-      <Route path="" element={<PrivateRoute />}>
-        <Route path="/users/profile" element={<UserProfileScreen />}></Route>
-        <Route path="" element={<AdminRoute />}>
-          <Route path="/admin/userList" element={<UserListScreen />}></Route>
-          <Route
-            path="/admin/user/:id/edit"
-            element={<UserEditScreen />}
-          ></Route>
-          <Route
-            path="/admin/uploadFiles"
-            element={<UploadFilesScreen />}
-          ></Route>
-        </Route>
-        <Route
-          path="/users/trainingPlan"
-          element={<TrainingPlanScreen />}
-        ></Route>
-      </Route>
-    </Route>
-  )
+	createRoutesFromElements(
+		<Route path="/" element={<App />}>
+			<Route index element={<HomePage />}></Route>
+			<Route path="/login" element={<LoginScreen />}></Route>
+			<Route path="/reset" element={<ResetScreen />}></Route>
+			<Route path="/register" element={<RegisterScreen />}></Route>
+			<Route path="" element={<PrivateRoute />}>
+				<Route path="/users/profile" element={<UserProfileScreen />}></Route>
+				<Route path="" element={<AdminRoute />}>
+					<Route path="/admin/userList" element={<UserListScreen />}></Route>
+					<Route
+						path="/admin/user/:id/edit"
+						element={<UserEditScreen />}
+					></Route>
+					<Route
+						path="/admin/uploadFiles"
+						element={<UploadFilesScreen />}
+					></Route>
+				</Route>
+				<Route
+					path="/users/trainingPlan"
+					element={<TrainingPlanScreen />}
+				></Route>
+			</Route>
+		</Route>
+	)
 );
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={router}>
-        <App />
-      </RouterProvider>
-    </Provider>
-  </React.StrictMode>
+	<React.StrictMode>
+		<Provider store={store}>
+			<RouterProvider router={router}>
+				<App />
+			</RouterProvider>
+		</Provider>
+	</React.StrictMode>
 );

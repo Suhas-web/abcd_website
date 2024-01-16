@@ -1,41 +1,45 @@
 import express from "express";
 import {
-  userAuthentication,
-  adminAuthentication,
+	userAuthentication,
+	adminAuthentication,
 } from "../middleware/authenticationMiddleware.js";
 
 import {
-  authUser,
-  registerUser,
-  logoutUser,
-  getUserProfile,
-  updateUserProfile,
-  getUsers,
-  getUserById,
-  updateUser,
-  deleteUserProfile,
+	authUser,
+	registerUser,
+	logoutUser,
+	getUserProfile,
+	updateUserProfile,
+	getUsers,
+	getUserById,
+	updateUser,
+	deleteUserProfile,
+	getExistingMobile,
+	updateUserPassword,
 } from "../controllers/userController.js";
 
 const router = express.Router();
 
 router
-  .route("/register")
-  .post(registerUser)
-  .get(userAuthentication, adminAuthentication, getUsers);
+	.route("/register")
+	.post(registerUser)
+	.get(userAuthentication, adminAuthentication, getUsers);
+router.post("/checkExistingMobile", getExistingMobile);
+router.put("/reset", updateUserPassword);
 router.post("/logout", logoutUser);
 router.post("/auth", authUser);
 router
-  .route("/profile")
-  .get(userAuthentication, getUserProfile)
-  .put(userAuthentication, updateUserProfile);
+	.route("/profile")
+	.get(userAuthentication, getUserProfile)
+	.put(userAuthentication, updateUserProfile);
 router
-  .route("/:id")
-  .delete(userAuthentication, adminAuthentication, deleteUserProfile)
-  .get(userAuthentication, adminAuthentication, getUserById)
-  .put(userAuthentication, adminAuthentication, updateUser);
+	.route("/:id")
+	.delete(userAuthentication, adminAuthentication, deleteUserProfile)
+	.get(userAuthentication, adminAuthentication, getUserById)
+	.put(userAuthentication, adminAuthentication, updateUser);
 router
-  .route("/")
-  .get(userAuthentication, adminAuthentication, getUsers)
-  .delete(userAuthentication, adminAuthentication, deleteUserProfile);
+	.route("/")
+	.get(userAuthentication, adminAuthentication, getUsers)
+	.delete(userAuthentication, adminAuthentication, deleteUserProfile);
 
 export default router;
