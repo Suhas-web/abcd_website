@@ -35,62 +35,6 @@ const AboutUs = () => {
 				</Col>
 				<Col md={2}></Col>
 			</Row>
-			<Row>
-				<Col md={2}></Col>
-				<CardGroup>
-					<Col md={8}>
-						<Card>
-							<Card.Img
-								variant="top"
-								src={maruti}
-								height="5%"
-								width="30%"
-								fluid
-							/>
-							<Card.Body>
-								<Card.Title>Maruti</Card.Title>
-								<Card.Text>
-									Maruti has been taking care of himself when he was 13yr old.
-									He has tried his hand at Wrestling, Football, Gardening,
-									Photography, Videography, Modeling & Competitive Bodybuilding.
-									A man of several interests & talents has always had the gym
-									and training close to his heart.
-								</Card.Text>
-							</Card.Body>
-							<Card.Footer>
-								<small className="text-muted">Last updated 3 mins ago</small>
-							</Card.Footer>
-						</Card>
-					</Col>
-				</CardGroup>
-				<CardGroup>
-					<Col md={8}>
-						<Card>
-							<Card.Img
-								variant="top"
-								src={maruti}
-								height="5%"
-								width="30%"
-								fluid
-							/>
-							<Card.Body>
-								<Card.Title>Maruti</Card.Title>
-								<Card.Text>
-									Maruti has been taking care of himself when he was 13yr old.
-									He has tried his hand at Wrestling, Football, Gardening,
-									Photography, Videography, Modeling & Competitive Bodybuilding.
-									A man of several interests & talents has always had the gym
-									and training close to his heart.
-								</Card.Text>
-							</Card.Body>
-							<Card.Footer>
-								<small className="text-muted">Last updated 3 mins ago</small>
-							</Card.Footer>
-						</Card>
-					</Col>
-				</CardGroup>
-				<Col md={2}></Col>
-			</Row>
 		</section>
 	);
 };
