@@ -1,10 +1,16 @@
-import React from 'react'
-import CarouselPage from '../components/Carousal'
+import React from "react";
+import CarouselPage from "../components/Carousal";
+import Features from "../components/Features";
+import AboutUs from "../components/AboutUs";
 
 const HomePage = () => {
-  return (
-    <><CarouselPage/></>
-  )
-}
+	return (
+		<>
+			<CarouselPage />
+			<Features />
+			<AboutUs />
+		</>
+	);
+};
 
-export default HomePage
+export default HomePage;

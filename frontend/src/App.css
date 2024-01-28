@@ -1,3 +1,29 @@
-.App {
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@500&family=DM+Sans:opsz,wght@9..40,300&family=Wix+Madefor+Text:ital,wght@0,400;1,800&display=swap');
+.Features {
   text-align: center;
+}
+
+body {
+  background-color: black;
+  color: white;
+}
+
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 80px;
+}
+
+h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 60px;
+}
+
+p {
+  font-size: 18px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.quotes {
+  font-family: 'Caveat', cursive;
+  font-size: 1.5rem;
 }

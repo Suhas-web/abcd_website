@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { Row, Col, Button, Form } from "react-bootstrap";
+import { Row, Col, Button, Form, Image } from "react-bootstrap";
+import otp_image from "../assets/otp_image.jpeg";
+
 import {
 	Link,
 	useLocation,
@@ -138,6 +140,7 @@ const ResetScreen = () => {
 	) : (
 		<FormContainer className="my-3">
 			<h3 className="mt-3">Enter Your Mobile Number to recieve 4-digit OTP</h3>
+			{/* <Image src={otp_image} fluid></Image> */}
 
 			<Form onSubmit={verifyOTPHandler}>
 				<Row>
