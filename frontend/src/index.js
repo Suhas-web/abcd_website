@@ -23,6 +23,7 @@ import MembershipScreen from "./screens/MembershipScreen";
 import TrainingPlanScreen from "./screens/TrainingPlanScreen";
 import UploadFilesScreen from "./screens/admin/UploadFilesScreen";
 import ResetScreen from "./screens/ResetScreen";
+import CreateNewUser from "./screens/admin/CreateNewUser";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const router = createBrowserRouter(
@@ -37,6 +38,18 @@ const router = createBrowserRouter(
 				<Route path="" element={<AdminRoute />}>
 					<Route path="/admin/userList" element={<UserListScreen />}></Route>
 					<Route
+						path="/admin/userList/search/:keyword"
+						element={<UserListScreen />}
+					></Route>
+					<Route
+						path="/admin/userList/page/:pageNumber"
+						element={<UserListScreen />}
+					></Route>
+					<Route
+						path="/admin/userList/search/:keyword/page/:pageNumber"
+						element={<UserListScreen />}
+					></Route>
+					<Route
 						path="/admin/user/:id/edit"
 						element={<UserEditScreen />}
 					></Route>
@@ -44,6 +57,19 @@ const router = createBrowserRouter(
 						path="/admin/uploadFiles"
 						element={<UploadFilesScreen />}
 					></Route>
+					<Route
+						path="/admin/uploadFiles/search/:keyword"
+						element={<UploadFilesScreen />}
+					></Route>
+					<Route
+						path="/admin/uploadFiles/page/:pageNumber"
+						element={<UploadFilesScreen />}
+					></Route>
+					<Route
+						path="/admin/uploadFiles/search/:keyword/page/:pageNumber"
+						element={<UserListScreen />}
+					></Route>
+					<Route path="/admin/createUser" element={<CreateNewUser />}></Route>
 				</Route>
 				<Route
 					path="/users/trainingPlan"

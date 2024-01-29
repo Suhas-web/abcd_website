@@ -32,6 +32,13 @@ const usersSliceApi = apiSlice.injectEndpoints({
 				body: data,
 			}),
 		}),
+		createNewUser: builder.mutation({
+			query: (data) => ({
+				url: `${USERS_URL}/create`,
+				method: "POST",
+				body: data,
+			}),
+		}),
 		updatePassword: builder.mutation({
 			query: (data) => ({
 				url: `${USERS_URL}/reset`,
@@ -40,11 +47,15 @@ const usersSliceApi = apiSlice.injectEndpoints({
 			}),
 		}),
 		getUserProfiles: builder.query({
-			query: () => ({
+			query: ({ pageNumber, keyword }) => ({
 				url: USERS_URL,
+				params: {
+					keyword,
+					pageNumber,
+				},
 			}),
-			providesTags: ["USERS"],
 			keepUnusedDataFor: 5,
+			providesTags: ["USERS"],
 		}),
 		checkExistingMobile: builder.mutation({
 			query: (mobile) => ({
@@ -90,4 +101,5 @@ export const {
 	useUpdateUserProfileMutation,
 	useCheckExistingMobileMutation,
 	useUpdatePasswordMutation,
+	useCreateNewUserMutation,
 } = usersSliceApi;

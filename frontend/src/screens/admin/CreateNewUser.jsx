@@ -1,99 +1,42 @@
-import { useState, useEffect } from "react";
-import { Row, Col, Button, Form } from "react-bootstrap";
+import { useState } from "react";
+import { Col, Button, Form } from "react-bootstrap";
+import FormContainer from "../../components/FormContainer";
+import Loader from "../../components/Loader";
+import { useSelector } from "react-redux";
 import {
-	Link,
-	useLocation,
-	useNavigate,
-	useSearchParams,
-} from "react-router-dom";
-import FormContainer from "../components/FormContainer";
-import Loader from "../components/Loader";
-import { useDispatch, useSelector } from "react-redux";
-import {
-	useRegisterMutation,
+	useCreateNewUserMutation,
 	useCheckExistingMobileMutation,
-} from "../slices/usersApiSlice";
-import { setCredentials } from "../slices/authSlice";
+} from "../../slices/usersApiSlice";
 import { toast } from "react-toastify";
-import {
-	useSendOTPSMSMutation,
-	useVerifyOTPMutation,
-} from "../slices/otpSlice";
+import { useNavigate } from "react-router-dom";
 
-const RegisterScreen = () => {
+const CreateNewUser = () => {
 	const [name, setName] = useState("");
 	const [mobile, setMobile] = useState("");
 	const [email, setEmail] = useState("");
+	const [isAdmin, setIsAdmin] = useState("");
 	const [password, setPassword] = useState("");
-	const [isSubmitted, SetIsSubmitted] = useState(false);
-	const [OTP, setOTP] = useState("");
-	const [isOtpSent, setIsOtpSent] = useState(false);
-	const [isOtpVerified, setIsOtpVerified] = useState(false);
-
-	const [sendOTP, { isError }] = useSendOTPSMSMutation();
-	const [verifyOTP] = useVerifyOTPMutation();
-
-	const [checkExistingUser] = useCheckExistingMobileMutation();
-
-	const { userInfo } = useSelector((state) => state.auth);
-	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const { search } = useLocation();
-	const sp = new URLSearchParams(search);
-	const redirect = sp.get("redirect") || "/";
+	const [checkExistingUser] = useCheckExistingMobileMutation();
+	const [createUser, { isLoading }] = useCreateNewUserMutation();
+	const { userInfo } = useSelector((state) => state.auth);
 
-	useEffect(() => {
-		if (userInfo) {
-			navigate(redirect);
-		}
-	}, [userInfo, redirect, navigate]);
-
-	const [register, { isLoading }] = useRegisterMutation();
 	const submitHandler = async (e) => {
 		e.preventDefault();
 		try {
-			const res = await register({ name, mobile, email, password }).unwrap();
-			dispatch(setCredentials({ ...res }));
+			const res = await createUser({
+				name,
+				mobile,
+				email,
+				password,
+				isAdmin,
+			}).unwrap();
+			toast.success("Created user: ", name);
+			navigate("/admin/userList");
 		} catch (err) {
 			console.log(err?.data);
 			toast.error(err?.data?.message || err.error);
-		}
-	};
-
-	const sendOTPHandler = async (e) => {
-		e.preventDefault();
-		const res = await sendOTP({ mobileNumber: mobile });
-		console.log("Send OTP response: ", res);
-		if (res && res.data) {
-			if (!res.data.alreadySent) {
-				console.log(res.data.alreadySent);
-				toast.success("OTP sent successfully");
-			} else if (res.data.alreadySent) {
-				toast.success("OTP sent already! Try again after 15 minutes");
-			}
-			setIsOtpSent(true);
-		} else {
-			toast.error("Unable to send OTP. Try again");
-		}
-	};
-
-	const verifyOTPHandler = async (e) => {
-		e.preventDefault();
-		const res = await verifyOTP({ mobileNumber: mobile, enteredOTP: OTP });
-		console.log("Verify OTP response: ", res);
-		if (res && res.data) {
-			if (res.data.isOtpSent && res.data.isVerified) {
-				setIsOtpVerified(true);
-				toast.success("Verified OTP!");
-				submitHandler(e);
-			} else if (!res.data.isOtpSent) {
-				toast.error("OTP expired! Send OTP again");
-			} else if (!res.data.isVerified) {
-				toast.error("Incorrect OTP");
-			}
-		} else {
-			toast.error("Server error. Try again");
 		}
 	};
 
@@ -102,18 +45,12 @@ const RegisterScreen = () => {
 		const validEmail = validateEmail(email);
 		const validPhone = validateIndianPhoneNumber(mobile);
 		const validPassword = validatePassword(password);
-		console.log("Validation: ", validEmail, validPassword, validPhone);
 		if (validEmail && validPhone && validPassword) {
 			const existingUser = await checkExistingUser(mobile);
-			console.log(existingUser);
 			if (existingUser && existingUser.data.isExistingMobile) {
-				toast.error(
-					"This mobile number is already registered, login with your mobile number"
-				);
-				navigate("/login");
+				toast.error("This mobile number is already registered.");
 			} else {
-				SetIsSubmitted(true);
-				toast.success("Verify OTP on your mobile to register");
+				submitHandler(e);
 			}
 		} else if (!validEmail) {
 			toast.error("Enter valid email");
@@ -123,7 +60,6 @@ const RegisterScreen = () => {
 			toast.error("Enter valid mobile number");
 		} else {
 			toast.error("Enter valid detail");
-			SetIsSubmitted(false);
 		}
 	};
 
@@ -145,9 +81,9 @@ const RegisterScreen = () => {
 	return (
 		<>
 			<FormContainer>
-				{!isSubmitted ? (
+				{userInfo && userInfo.isAdmin ? (
 					<Col md={8} xs={12}>
-						<h1>Register</h1>
+						<h1>Create User</h1>
 						<Form onSubmit={performValidation}>
 							<Form.Group controlId="name" className="my-3">
 								<Form.Label>Name</Form.Label>
@@ -205,51 +141,27 @@ const RegisterScreen = () => {
 									Password must be less than 15 characters.
 								</Form.Control.Feedback> */}
 							</Form.Group>
+							<Form.Group controlId="isAdmin" className="my-2">
+								<Form.Check
+									type="checkbox"
+									label="isAdmin"
+									checked={Boolean(isAdmin)}
+									value={isAdmin}
+									onChange={(e) => setIsAdmin(e.target.checked)}
+								></Form.Check>
+							</Form.Group>
 							<Button type="submit" variant="primary" className="mt-2">
-								Sign Up
+								Create user
 							</Button>
 							{isLoading && <Loader />}
 						</Form>
-						<Row className="py-3 text-center">
-							<Col>
-								Existing user? <Link to="/login">Login</Link>
-							</Col>
-						</Row>
 					</Col>
 				) : (
-					<>
-						{!isOtpVerified && (
-							<Form onSubmit={verifyOTPHandler}>
-								<h3>Verify OTP to update profile</h3>
-								<Button
-									onClick={sendOTPHandler}
-									className="my-2"
-									variant="primary"
-								>
-									Send OTP
-								</Button>
-								<Form.Group name="verifyOTP" className="my-2">
-									<Form.Label>Enter OTP</Form.Label>
-									<Form.Control
-										type="text"
-										onChange={(e) => setOTP(e.target.value)}
-									></Form.Control>
-								</Form.Group>
-								<Button
-									type="submit"
-									className="my-2"
-									variant="primary"
-									disabled={!isOtpSent}
-								>
-									Verify OTP
-								</Button>
-							</Form>
-						)}
-					</>
+					<h2>No access</h2>
 				)}
 			</FormContainer>
 		</>
 	);
 };
 
-export default RegisterScreen;
+export default CreateNewUser;

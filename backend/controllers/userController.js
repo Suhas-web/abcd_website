@@ -164,7 +164,20 @@ const updateUserPassword = async (req, res) => {
 // endpoint: GET /api/users
 // Access: private/admin
 const getUsers = errorHandler(async (req, res) => {
-	res.status(200).json(await User.find({}, { password: 0 }));
+	const pageSize = Number(process.env.PAGINATION_LIMIT);
+	const page = Number(req.query.pageNumber) || 1;
+
+	const keyword = req.query.keyword
+		? { name: { $regex: req.query.keyword, $options: "i" } }
+		: {};
+	const totalUsers = await User.countDocuments({ ...keyword });
+
+	const users = await User.find({ ...keyword }, { password: 0 })
+		.limit(pageSize)
+		.skip(pageSize * (page - 1));
+	res
+		.status(200)
+		.json({ users, page, pages: Math.ceil(totalUsers / pageSize) });
 });
 
 // desc: GET user by id
@@ -184,30 +197,37 @@ const getUserById = errorHandler(async (req, res) => {
 // endpoint: PUT /api/users/:id
 // Access: private/admin
 const updateUser = errorHandler(async (req, res) => {
-	const user = await User.findById({ _id: req.body._id });
+	const user = await User.findById({ _id: req.params.id });
 	if (user) {
-		user.name = req.body.name || user.name;
-		user.mobile = req.body.mobile || user.mobile;
-		user.email = req.body.email || user.email;
-		user.isAdmin = Boolean(req.body.isAdmin);
-		user.membershipPlan = req.body.membershipPlan || user.membershipPlan;
-		user.validTill = user.validTill;
+		const userExist = await User.findOne({ mobile: req.body.mobile });
+		if (userExist && userExist.length > 0) {
+			console.log(userExist);
+			res.status(400);
+			throw new Error("User already exists");
+		} else {
+			user.name = req.body.name || user.name;
+			user.mobile = req.body.mobile || user.mobile;
+			user.email = req.body.email || user.email;
+			user.isAdmin = Boolean(req.body.isAdmin);
+			user.membershipPlan = req.body.membershipPlan || user.membershipPlan;
+			user.validTill = user.validTill;
 
-		try {
-			const updatedUser = await user.save();
-			res.status(200).json({
-				_id: updatedUser._id,
-				name: updatedUser.name,
-				mobile: updatedUser.mobile,
-				email: updateUser.email,
-				isAdmin: updatedUser.isAdmin,
-				membershipPlan: updateUser.membershipPlan,
-				validTill: updatedUser.validTill,
-			});
-		} catch (err) {
-			res.status(500);
-			console.log(err);
-			throw new Error("Error updating user");
+			try {
+				const updatedUser = await user.save();
+				res.status(200).json({
+					_id: updatedUser._id,
+					name: updatedUser.name,
+					mobile: updatedUser.mobile,
+					email: updateUser.email,
+					isAdmin: updatedUser.isAdmin,
+					membershipPlan: updateUser.membershipPlan,
+					validTill: updatedUser.validTill,
+				});
+			} catch (err) {
+				res.status(500);
+				console.log(err);
+				throw new Error("Error updating user");
+			}
 		}
 	} else {
 		res.status(404);
@@ -236,6 +256,32 @@ const deleteUserProfile = errorHandler(async (req, res) => {
 	}
 });
 
+// desc: Create user
+// endpoint: POST /api/users
+// Access: Admin
+const createNewUser = errorHandler(async (req, res) => {
+	const { name, mobile, email, password } = req.body;
+	const userExist = await User.findOne({ mobile });
+	if (userExist) {
+		res.status(400);
+		throw new Error("User already exists");
+	}
+	const isAdmin = Boolean(req.body.isAdmin) || false;
+	const user = await User.create({ name, mobile, email, password, isAdmin });
+	if (user) {
+		res.status(201).json({
+			_id: user._id,
+			name: user.name,
+			mobile: user.mobile,
+			email: user.email,
+			isAdmin: user.isAdmin,
+		});
+	} else {
+		res.status(400);
+		throw new Error("Invalid user data");
+	}
+});
+
 export {
 	authUser,
 	registerUser,
@@ -248,4 +294,5 @@ export {
 	deleteUserProfile,
 	getExistingMobile,
 	updateUserPassword,
+	createNewUser,
 };

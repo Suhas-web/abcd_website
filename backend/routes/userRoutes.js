@@ -16,6 +16,7 @@ import {
 	deleteUserProfile,
 	getExistingMobile,
 	updateUserPassword,
+	createNewUser,
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -41,5 +42,6 @@ router
 	.route("/")
 	.get(userAuthentication, adminAuthentication, getUsers)
 	.delete(userAuthentication, adminAuthentication, deleteUserProfile);
+router.post("/create", createNewUser, userAuthentication, adminAuthentication);
 
 export default router;

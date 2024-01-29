@@ -39,7 +39,7 @@ function Features() {
 						<img
 							width="250px"
 							height="250px"
-							fluid
+							fluid="true"
 							src={person_working_out}
 							alt="Person working out"
 						/>
@@ -78,7 +78,7 @@ function Features() {
 						<img
 							width="250px"
 							height="250px"
-							fluid
+							fluid="true"
 							src={dumbbells}
 							alt="dumbbells"
 						/>
