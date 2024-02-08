@@ -1,5 +1,4 @@
-import { React, useRef } from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Row, Col, Button, Form } from "react-bootstrap";
 import FormContainer from "../components/FormContainer";
 import { toast } from "react-toastify";
@@ -11,14 +10,20 @@ import {
 import { useCheckExistingUserMutation } from "../slices/usersApiSlice";
 import { validateEmail, validateIndianPhoneNumber } from "../utils/helper";
 import Loader from "../components/Loader";
-
+// Constants for OTP source
+const OTP_SOURCE = {
+	NONE: "NONE",
+	BOTH: "BOTH",
+	EMAIL: "EMAIL",
+	SMS: "SMS",
+};
 const OTPScreen = ({
 	phone = null,
 	mail = null,
 	checkExisting = false,
 	onCheckOtp,
 }) => {
-	const [otpSource, setOtpSource] = useState("NONE"); // none, mobile, email, both
+	const [otpSource, setOtpSource] = useState(OTP_SOURCE.NONE); // none, mobile, email, both
 	const OTP = useRef("");
 	const [isOtpSent, setIsOtpSent] = useState(false);
 	const [selectedMethod, setSelectedMethod] = useState(null);
@@ -38,57 +43,57 @@ const OTPScreen = ({
 		if (data && data.method) {
 			setOtpSource(data.method);
 			setTitle("Verify your contact through OTP");
-			if (otpSource === "BOTH") {
+			if (otpSource === OTP_SOURCE.BOTH) {
 				setMobile(phone);
 				setEmail(mail);
-			} else if (mail && otpSource === "EMAIL") {
+			} else if (mail && otpSource === OTP_SOURCE.EMAIL) {
 				setEmail(mail);
-			} else if (phone && otpSource === "SMS") {
+			} else if (phone && otpSource === OTP_SOURCE.SMS) {
 				setMobile(phone);
 				console.log("mobile, phone: ", mobile, phone);
 			}
 		} else {
-			setOtpSource("NONE");
+			setOtpSource(OTP_SOURCE.NONE);
 			setTitle("Contact Admin for updating your information");
 		}
 	}, [data, mobile, phone, mail, otpSource]);
 
-	const sendOTPHandler = async (e, source) => {
-		if (e) {
-			e.preventDefault();
-		}
-		console.log("checkExisting", checkExisting);
-		if (checkExisting) {
-			const existingUser = await checkExistingUser({ mobile, email });
-			if (existingUser && existingUser?.data?.isExistingUser) {
-				setUserId(existingUser.data.userId);
-			} else {
-				toast.error("Contact does not exist");
-				setSelectedMethod(null);
-				return;
+	const sendOTPHandler = useCallback(
+		async (e, source) => {
+			if (e) {
+				e.preventDefault();
 			}
-		}
+			if (checkExisting) {
+				const existingUser = await checkExistingUser({ mobile, email });
+				if (existingUser && existingUser?.data?.isExistingUser) {
+					setUserId(existingUser.data.userId);
+				} else {
+					toast.error("Contact does not exist");
+					setSelectedMethod(null);
+					return;
+				}
+			}
 
-		const res = await sendOTP({
-			source,
-			mobile,
-			email,
-		});
-		console.log("Send OTP response: ", res);
-		if (res && res.data) {
-			if (!res.data.alreadySent) {
-				console.log(res.data.alreadySent);
-				toast.success("OTP sent successfully");
-			} else if (res.data.alreadySent) {
-				toast.success("OTP sent already! Try again after 15 minutes");
+			const res = await sendOTP({
+				source,
+				mobile,
+				email,
+			});
+			if (res && res.data) {
+				if (!res.data.alreadySent) {
+					toast.success("OTP sent successfully");
+				} else if (res.data.alreadySent) {
+					toast.success("OTP sent already! Try again after 15 minutes");
+				}
+				setIsOtpSent(true);
+			} else if (isErrorSend) {
+				toast.error("Server error");
+			} else {
+				toast.error("Unable to send OTP. Try again");
 			}
-			setIsOtpSent(true);
-		} else if (isErrorSend) {
-			toast.error("Server error");
-		} else {
-			toast.error("Unable to send OTP. Try again");
-		}
-	};
+		},
+		[checkExisting, mobile, email, sendOTP, isErrorSend, checkExistingUser]
+	);
 
 	const verifyOTPHandler = async (e) => {
 		e.preventDefault();
@@ -126,38 +131,41 @@ const OTPScreen = ({
 			<>
 				{!isOtpSent && selectedMethod && (
 					<FormContainer>
-						{(otpSource === "SMS" || otpSource === "BOTH") && (
-							<Form onSubmit={(e) => sendOTPHandler(e, "SMS")}>
-								<Form.Group controlId="Mobile Number" className="my-3">
-									<Form.Label>Mobile Number</Form.Label>
-									<Form.Control
-										type="text"
-										placeholder="Enter Mobile Number"
-										value={mobile}
-										onChange={(e) => setMobile(e.target.value)}
-										required
-										pattern="^[6-9]\d{9}$"
-									></Form.Control>
-								</Form.Group>
-								<Button type="submit">Send OTP to mobile</Button>
-							</Form>
-						)}
+						{(otpSource === OTP_SOURCE.SMS || otpSource === OTP_SOURCE.BOTH) &&
+							selectedMethod === OTP_SOURCE.SMS && (
+								<Form onSubmit={(e) => sendOTPHandler(e, OTP_SOURCE.SMS)}>
+									<Form.Group controlId="Mobile Number" className="my-3">
+										<Form.Label>Mobile Number</Form.Label>
+										<Form.Control
+											type="text"
+											placeholder="Enter Mobile Number"
+											value={mobile}
+											onChange={(e) => setMobile(e.target.value)}
+											required
+											pattern="^[6-9]\d{9}$"
+										></Form.Control>
+									</Form.Group>
+									<Button type="submit">Send OTP to mobile</Button>
+								</Form>
+							)}
 
-						{(otpSource === "EMAIL" || otpSource === "BOTH") && (
-							<Form onSubmit={(e) => sendOTPHandler(e, "EMAIL")}>
-								<Form.Group controlId="email" className="my-3">
-									<Form.Label>Email</Form.Label>
-									<Form.Control
-										type="email"
-										placeholder="Enter email"
-										value={email}
-										onChange={(e) => setEmail(e.target.value)}
-										required
-									></Form.Control>
-								</Form.Group>
-								<Button type="submit">Send OTP to email</Button>
-							</Form>
-						)}
+						{(otpSource === OTP_SOURCE.EMAIL ||
+							otpSource === OTP_SOURCE.BOTH) &&
+							selectedMethod === OTP_SOURCE.EMAIL && (
+								<Form onSubmit={(e) => sendOTPHandler(e, OTP_SOURCE.EMAIL)}>
+									<Form.Group controlId="email" className="my-3">
+										<Form.Label>Email</Form.Label>
+										<Form.Control
+											type="email"
+											placeholder="Enter email"
+											value={email}
+											onChange={(e) => setEmail(e.target.value)}
+											required
+										></Form.Control>
+									</Form.Group>
+									<Button type="submit">Send OTP to email</Button>
+								</Form>
+							)}
 					</FormContainer>
 				)}
 			</>
@@ -196,23 +204,41 @@ const OTPScreen = ({
 	const SelectOtpMethod = () => {
 		return (
 			<>
-				{otpSource && (otpSource === "BOTH" || otpSource === "SMS") && (
-					<Button onClick={handleSelectSMS}>Send SMS</Button>
-				)}
-				{otpSource && (otpSource === "BOTH" || otpSource === "EMAIL") && (
-					<Button onClick={handleSelectMail}>Send Email</Button>
-				)}
+				{otpSource &&
+					(otpSource === OTP_SOURCE.BOTH || otpSource === OTP_SOURCE.SMS) && (
+						<div className="mt-1">
+							<Button
+								className="btn-primary"
+								style={{ width: "200px" }}
+								onClick={handleSelectSMS}
+							>
+								Send SMS
+							</Button>
+						</div>
+					)}
+				{otpSource &&
+					(otpSource === OTP_SOURCE.BOTH || otpSource === OTP_SOURCE.EMAIL) && (
+						<div className="my-3">
+							<Button
+								className="btn-primary"
+								style={{ width: "200px" }}
+								onClick={handleSelectMail}
+							>
+								Send Email
+							</Button>
+						</div>
+					)}
 			</>
 		);
 	};
 
 	const handleSelectSMS = (e) => {
 		e.preventDefault();
-		setSelectedMethod("SMS");
+		setSelectedMethod(OTP_SOURCE.SMS);
 		console.log("mobile: ", mobile);
 		if (mobile && mobile.length > 0) {
 			if (validateIndianPhoneNumber(mobile)) {
-				sendOTPHandler(e, "SMS");
+				sendOTPHandler(e, OTP_SOURCE.SMS);
 			} else {
 				toast.error("Invalid mobile number");
 				setSelectedMethod(null);
@@ -222,10 +248,10 @@ const OTPScreen = ({
 
 	const handleSelectMail = (e) => {
 		e.preventDefault();
-		setSelectedMethod("EMAIL");
+		setSelectedMethod(OTP_SOURCE.EMAIL);
 		if (email && email.length > 0) {
 			if (validateEmail(email)) {
-				sendOTPHandler(e, "EMAIL");
+				sendOTPHandler(e, OTP_SOURCE.EMAIL);
 			} else {
 				toast.error("Invalid email");
 				setSelectedMethod(null);
@@ -238,7 +264,7 @@ const OTPScreen = ({
 			<FormContainer className="my-3">
 				<h3 className="mt-3">{title}</h3>
 				{/* <Image src={otp_image} fluid></Image> */}
-				{otpSource && otpSource !== "NONE" && (
+				{otpSource && otpSource !== OTP_SOURCE.NONE && (
 					<>
 						{!selectedMethod ? (
 							<SelectOtpMethod />
