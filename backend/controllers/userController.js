@@ -22,7 +22,7 @@ const authUser = errorHandler(async (req, res) => {
 		});
 	} else {
 		res.status(401);
-		throw new Error("Invalid mobile number ");
+		throw new Error("Invalid mobile number or password");
 	}
 });
 
@@ -63,18 +63,22 @@ const logoutUser = errorHandler(async (req, res) => {
 	res.status(200).json({ message: "Logged out successfully" });
 });
 
-// desc: Check if mobile number is existing
+// desc: Check if mobile number/email is existing
 // endpoint: GET /api/users/profile
 // Access: private
-const getExistingMobile = errorHandler(async (req, res) => {
-	const user = await User.find({ mobile: req.body.mobile });
-	if (user && user.length > 0) {
+const getExistingContact = errorHandler(async (req, res) => {
+	const { email, mobile } = req.body;
+	const user = mobile
+		? await User.findOne({ mobile: mobile })
+		: await User.findOne({ email: email });
+	if (user) {
 		res.status(200).json({
-			isExistingMobile: true,
+			isExistingUser: true,
+			userId: user._id,
 		});
 	} else {
 		res.status(200).json({
-			isExistingMobile: false,
+			isExistingUser: false,
 		});
 	}
 });
@@ -136,27 +140,29 @@ const updateUserProfile = errorHandler(async (req, res) => {
 // endpoint: PUT /api/users/reset
 // Access: any
 const updateUserPassword = async (req, res) => {
-	const user = await User.findOne({ mobile: req.body.mobile });
-	if (user) {
-		if (req.body.password) {
-			user.password = req.body.password;
-		} else {
-			res.status(400);
-			throw new Error("Bad request");
-		}
-		try {
+	const { userId, password } = req.body;
+	try {
+		const user = await User.findById(userId);
+		if (user) {
+			if (password) {
+				user.password = password;
+			} else {
+				res.status(400);
+				throw new Error("Bad request");
+			}
+
 			const updatedUser = await user.save();
 			res.status(200).json({
 				_id: updatedUser._id,
 			});
-		} catch (error) {
-			console.log(error);
-			res.status(500);
-			throw new Error("Error reset password");
+		} else {
+			res.status(404);
+			throw new Error("Not found user data");
 		}
-	} else {
-		res.status(404);
-		throw new Error("Not found user data");
+	} catch (error) {
+		console.log(error);
+		res.status(500);
+		throw new Error("Error reset password");
 	}
 };
 
@@ -292,7 +298,7 @@ export {
 	getUserById,
 	updateUser,
 	deleteUserProfile,
-	getExistingMobile,
+	getExistingContact,
 	updateUserPassword,
 	createNewUser,
 };

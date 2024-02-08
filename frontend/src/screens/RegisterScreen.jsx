@@ -1,39 +1,29 @@
 import { useState, useEffect } from "react";
 import { Row, Col, Button, Form } from "react-bootstrap";
-import {
-	Link,
-	useLocation,
-	useNavigate,
-	useSearchParams,
-} from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import FormContainer from "../components/FormContainer";
 import Loader from "../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	useRegisterMutation,
-	useCheckExistingMobileMutation,
+	useCheckExistingUserMutation,
 } from "../slices/usersApiSlice";
 import { setCredentials } from "../slices/authSlice";
 import { toast } from "react-toastify";
 import {
-	useSendOTPSMSMutation,
-	useVerifyOTPMutation,
-} from "../slices/otpSlice";
+	validateEmail,
+	validateIndianPhoneNumber,
+	validatePassword,
+} from "../utils/helper";
+import OTPScreen from "./OTPScreen";
 
 const RegisterScreen = () => {
 	const [name, setName] = useState("");
 	const [mobile, setMobile] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [isSubmitted, SetIsSubmitted] = useState(false);
-	const [OTP, setOTP] = useState("");
-	const [isOtpSent, setIsOtpSent] = useState(false);
-	const [isOtpVerified, setIsOtpVerified] = useState(false);
-
-	const [sendOTP, { isError }] = useSendOTPSMSMutation();
-	const [verifyOTP] = useVerifyOTPMutation();
-
-	const [checkExistingUser] = useCheckExistingMobileMutation();
+	const [isSubmitted, setIsSubmitted] = useState(false);
+	const [checkExistingUser] = useCheckExistingUserMutation();
 
 	const { userInfo } = useSelector((state) => state.auth);
 	const dispatch = useDispatch();
@@ -51,49 +41,15 @@ const RegisterScreen = () => {
 
 	const [register, { isLoading }] = useRegisterMutation();
 	const submitHandler = async (e) => {
-		e.preventDefault();
+		if (e) {
+			e.preventDefault();
+		}
 		try {
 			const res = await register({ name, mobile, email, password }).unwrap();
 			dispatch(setCredentials({ ...res }));
 		} catch (err) {
 			console.log(err?.data);
 			toast.error(err?.data?.message || err.error);
-		}
-	};
-
-	const sendOTPHandler = async (e) => {
-		e.preventDefault();
-		const res = await sendOTP({ mobileNumber: mobile });
-		console.log("Send OTP response: ", res);
-		if (res && res.data) {
-			if (!res.data.alreadySent) {
-				console.log(res.data.alreadySent);
-				toast.success("OTP sent successfully");
-			} else if (res.data.alreadySent) {
-				toast.success("OTP sent already! Try again after 15 minutes");
-			}
-			setIsOtpSent(true);
-		} else {
-			toast.error("Unable to send OTP. Try again");
-		}
-	};
-
-	const verifyOTPHandler = async (e) => {
-		e.preventDefault();
-		const res = await verifyOTP({ mobileNumber: mobile, enteredOTP: OTP });
-		console.log("Verify OTP response: ", res);
-		if (res && res.data) {
-			if (res.data.isOtpSent && res.data.isVerified) {
-				setIsOtpVerified(true);
-				toast.success("Verified OTP!");
-				submitHandler(e);
-			} else if (!res.data.isOtpSent) {
-				toast.error("OTP expired! Send OTP again");
-			} else if (!res.data.isVerified) {
-				toast.error("Incorrect OTP");
-			}
-		} else {
-			toast.error("Server error. Try again");
 		}
 	};
 
@@ -104,16 +60,16 @@ const RegisterScreen = () => {
 		const validPassword = validatePassword(password);
 		console.log("Validation: ", validEmail, validPassword, validPhone);
 		if (validEmail && validPhone && validPassword) {
-			const existingUser = await checkExistingUser(mobile);
+			const existingUser = await checkExistingUser({ mobile, email });
 			console.log(existingUser);
-			if (existingUser && existingUser.data.isExistingMobile) {
+			if (existingUser && existingUser.data.isExistingUser) {
 				toast.error(
 					"This mobile number is already registered, login with your mobile number"
 				);
 				navigate("/login");
 			} else {
-				SetIsSubmitted(true);
-				toast.success("Verify OTP on your mobile to register");
+				setIsSubmitted(true);
+				toast.success("Verify OTP to register");
 			}
 		} else if (!validEmail) {
 			toast.error("Enter valid email");
@@ -123,23 +79,17 @@ const RegisterScreen = () => {
 			toast.error("Enter valid mobile number");
 		} else {
 			toast.error("Enter valid detail");
-			SetIsSubmitted(false);
+			setIsSubmitted(false);
 		}
 	};
 
-	function validateEmail(email) {
-		var re =
-			/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		return re.test(String(email).toLowerCase());
-	}
-
-	function validateIndianPhoneNumber(phoneNumber) {
-		var re = /^[6-9]\d{9}$/;
-		return re.test(phoneNumber);
-	}
-
-	function validatePassword(password) {
-		return password && password.length > 6 && password.length < 15;
+	function handleOtpStatus({ status }) {
+		if (status === true) {
+			submitHandler();
+		} else {
+			toast.error("Could not verify OTP. Try again");
+			setIsSubmitted(false);
+		}
 	}
 
 	return (
@@ -159,9 +109,6 @@ const RegisterScreen = () => {
 									required
 									maxLength="30"
 								></Form.Control>
-								{/* <Form.Control.Feedback type="invalid">
-									Name must be less than 30 characters.
-								</Form.Control.Feedback> */}
 							</Form.Group>
 
 							<Form.Group controlId="Mobile Number" className="my-3">
@@ -174,9 +121,6 @@ const RegisterScreen = () => {
 									required
 									pattern="^[6-9]\d{9}$"
 								></Form.Control>
-								{/* <Form.Control.Feedback type="invalid">
-									Please enter a valid mobile number.
-								</Form.Control.Feedback> */}
 							</Form.Group>
 
 							<Form.Group controlId="email" className="my-3">
@@ -201,9 +145,6 @@ const RegisterScreen = () => {
 									maxLength="15"
 									isInvalid={password.length > 15 || password.length < 6}
 								></Form.Control>
-								{/* <Form.Control.Feedback type="invalid">
-									Password must be less than 15 characters.
-								</Form.Control.Feedback> */}
 							</Form.Group>
 							<Button type="submit" variant="primary" className="mt-2">
 								Sign Up
@@ -217,35 +158,12 @@ const RegisterScreen = () => {
 						</Row>
 					</Col>
 				) : (
-					<>
-						{!isOtpVerified && (
-							<Form onSubmit={verifyOTPHandler}>
-								<h3>Verify OTP to update profile</h3>
-								<Button
-									onClick={sendOTPHandler}
-									className="my-2"
-									variant="primary"
-								>
-									Send OTP
-								</Button>
-								<Form.Group name="verifyOTP" className="my-2">
-									<Form.Label>Enter OTP</Form.Label>
-									<Form.Control
-										type="text"
-										onChange={(e) => setOTP(e.target.value)}
-									></Form.Control>
-								</Form.Group>
-								<Button
-									type="submit"
-									className="my-2"
-									variant="primary"
-									disabled={!isOtpSent}
-								>
-									Verify OTP
-								</Button>
-							</Form>
-						)}
-					</>
+					<OTPScreen
+						phone={mobile}
+						mail={email}
+						checkExisting={false}
+						onCheckOtp={handleOtpStatus}
+					/>
 				)}
 			</FormContainer>
 		</>

@@ -19,11 +19,11 @@ import UserProfileScreen from "./screens/UserProfileScreen";
 import UserListScreen from "./screens/admin/UserListScreen";
 import AdminRoute from "./components/AdminRoute";
 import UserEditScreen from "./screens/admin/UserEditScreen";
-import MembershipScreen from "./screens/MembershipScreen";
 import TrainingPlanScreen from "./screens/TrainingPlanScreen";
 import UploadFilesScreen from "./screens/admin/UploadFilesScreen";
 import ResetScreen from "./screens/ResetScreen";
 import CreateNewUser from "./screens/admin/CreateNewUser";
+import OTPScreen from "./screens/OTPScreen";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const router = createBrowserRouter(
@@ -32,6 +32,7 @@ const router = createBrowserRouter(
 			<Route index element={<HomePage />}></Route>
 			<Route path="/login" element={<LoginScreen />}></Route>
 			<Route path="/reset" element={<ResetScreen />}></Route>
+			{/* <Route path="/otp" element={<OTPScreen />}></Route> */}
 			<Route path="/register" element={<RegisterScreen />}></Route>
 			<Route path="" element={<PrivateRoute />}>
 				<Route path="/users/profile" element={<UserProfileScreen />}></Route>

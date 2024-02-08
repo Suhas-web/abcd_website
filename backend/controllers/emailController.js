@@ -94,41 +94,37 @@ const SCOPE = ["https://www.googleapis.com/auth/gmail.send"];
 //   }
 // });
 
-const sendEmail = errorHandler(async (req, res) => {
-  const { emailBody, receivers, sub } = req.body;
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    host: "smtp.gmail.com",
-    auth: {
-      user: process.env.USER_EMAIL,
-      pass: process.env.EMAIL_APP_PASSWORD,
-    },
-  });
-  const mailOptions = {
-    from: {
-      name: "ABCD",
-      address: process.env.USER_EMAIL,
-    },
-    to: receivers,
-    subject: sub,
-    text: emailBody,
-  };
+const sendEmail = async (sub, receivers, emailBody) => {
+	console.log("sub, recievers, emailBody: ", sub, receivers, emailBody);
+	const transporter = nodemailer.createTransport({
+		service: "gmail",
+		host: "smtp.gmail.com",
+		auth: {
+			user: process.env.USER_EMAIL,
+			pass: process.env.EMAIL_APP_PASSWORD,
+		},
+	});
+	const mailOptions = {
+		from: {
+			name: "ABCD",
+			address: process.env.USER_EMAIL,
+		},
+		to: receivers,
+		subject: sub,
+		text: emailBody,
+	};
 
-  const sendMail = async (transporter, mailOptions) => {
-    try {
-      const mailResponse = await transporter.sendMail(mailOptions);
-      return mailResponse;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+	const sendMail = async (transporter, mailOptions) => {
+		console.log("mailOptions: ", mailOptions);
+		try {
+			const mailResponse = await transporter.sendMail(mailOptions);
+			return mailResponse;
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
-  const resp = await sendMail(transporter, mailOptions);
-  console.log(resp);
-  if (resp) {
-    res.send("Send email success");
-  } else {
-    res.status(500).send("Send email fail");
-  }
-});
+	const resp = await sendMail(transporter, mailOptions);
+	return resp;
+};
 export { sendEmail };

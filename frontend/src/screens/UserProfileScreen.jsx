@@ -3,10 +3,7 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useUpdateProfileMutation } from "../slices/usersApiSlice";
-import {
-	useSendOTPSMSMutation,
-	useVerifyOTPMutation,
-} from "../slices/otpSlice";
+import { useSendOTPMutation, useVerifyOTPMutation } from "../slices/otpSlice";
 import { setCredentials } from "../slices/authSlice";
 import FormContainer from "../components/FormContainer";
 import MembershipScreen from "./MembershipScreen";
@@ -26,7 +23,7 @@ const UserProfileScreen = () => {
 	const navigate = useNavigate();
 
 	const [updateProfile] = useUpdateProfileMutation();
-	const [sendOTP, { isLoading, isError }] = useSendOTPSMSMutation();
+	const [sendOTP, { isLoading, isError }] = useSendOTPMutation();
 	const [
 		verifyOTP,
 		{ isLoading: isVerifyOTPLoading, isError: isVerifyOTPError },

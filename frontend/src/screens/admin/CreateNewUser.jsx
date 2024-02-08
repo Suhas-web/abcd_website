@@ -5,7 +5,7 @@ import Loader from "../../components/Loader";
 import { useSelector } from "react-redux";
 import {
 	useCreateNewUserMutation,
-	useCheckExistingMobileMutation,
+	useCheckExistingUserMutation,
 } from "../../slices/usersApiSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ const CreateNewUser = () => {
 	const [password, setPassword] = useState("");
 	const navigate = useNavigate();
 
-	const [checkExistingUser] = useCheckExistingMobileMutation();
+	const [checkExistingUser] = useCheckExistingUserMutation();
 	const [createUser, { isLoading }] = useCreateNewUserMutation();
 	const { userInfo } = useSelector((state) => state.auth);
 
@@ -46,9 +46,9 @@ const CreateNewUser = () => {
 		const validPhone = validateIndianPhoneNumber(mobile);
 		const validPassword = validatePassword(password);
 		if (validEmail && validPhone && validPassword) {
-			const existingUser = await checkExistingUser(mobile);
-			if (existingUser && existingUser.data.isExistingMobile) {
-				toast.error("This mobile number is already registered.");
+			const existingUser = await checkExistingUser({ mobile, email });
+			if (existingUser && existingUser.data.isExistingUser) {
+				toast.error("This contact is already registered.");
 			} else {
 				submitHandler(e);
 			}

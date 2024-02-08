@@ -57,11 +57,11 @@ const usersSliceApi = apiSlice.injectEndpoints({
 			keepUnusedDataFor: 5,
 			providesTags: ["USERS"],
 		}),
-		checkExistingMobile: builder.mutation({
-			query: (mobile) => ({
-				url: `${USERS_URL}/checkExistingMobile`,
+		checkExistingUser: builder.mutation({
+			query: (data) => ({
+				url: `${USERS_URL}/checkExistingUser`,
 				method: "POST",
-				body: { mobile: Number(mobile) },
+				body: data,
 			}),
 			providesTags: ["USERS"],
 			keepUnusedDataFor: 5,
@@ -99,7 +99,7 @@ export const {
 	useGetUserProfilesDetailQuery,
 	useDeleteProfileMutation,
 	useUpdateUserProfileMutation,
-	useCheckExistingMobileMutation,
+	useCheckExistingUserMutation,
 	useUpdatePasswordMutation,
 	useCreateNewUserMutation,
 } = usersSliceApi;

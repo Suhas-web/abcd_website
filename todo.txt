@@ -1,4 +1,3 @@
 //Bug
-//Admin
-*Handle case when updating duplicate mobile
-*Create new user
+//Register Screen
+*Handle case when OTP created for email

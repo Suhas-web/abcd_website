@@ -14,7 +14,7 @@ import {
 	getUserById,
 	updateUser,
 	deleteUserProfile,
-	getExistingMobile,
+	getExistingContact,
 	updateUserPassword,
 	createNewUser,
 } from "../controllers/userController.js";
@@ -25,7 +25,7 @@ router
 	.route("/register")
 	.post(registerUser)
 	.get(userAuthentication, adminAuthentication, getUsers);
-router.post("/checkExistingMobile", getExistingMobile);
+router.post("/checkExistingUser", getExistingContact);
 router.put("/reset", updateUserPassword);
 router.post("/logout", logoutUser);
 router.post("/auth", authUser);
