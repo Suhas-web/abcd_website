@@ -1,3 +1,4 @@
-//Bug
-//Register Screen
-*Handle case when OTP created for email
+//Feature Admin
+*to update validTill
+*send newsletter/promotion mail
+*blogs
