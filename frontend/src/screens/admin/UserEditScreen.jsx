@@ -10,6 +10,12 @@ import {
 	useUpdateUserProfileMutation,
 } from "../../slices/usersApiSlice";
 
+const MEMBERSHIP_TYPE = {
+	NONE: "NONE",
+	CLASSIC: "CLASSIC",
+	PREMIUM: "PREMIUM",
+};
+
 const UserEditScreen = () => {
 	const { id: userId } = useParams();
 	const [name, setName] = useState("");
@@ -18,6 +24,7 @@ const UserEditScreen = () => {
 	const [email, setEmail] = useState("");
 	const [isAdmin, setIsAdmin] = useState("");
 	const [membershipPlan, setMembershipPlan] = useState("");
+	const [validTill, setValidTill] = useState("");
 	const {
 		data: user,
 		error,
@@ -37,14 +44,17 @@ const UserEditScreen = () => {
 			password,
 			isAdmin,
 			membershipPlan,
+			validTill,
 		};
-		const result = await updateUser(updatedUser).unwrap();
-		if (result && result.error) {
-			console.log(result.error);
-			toast.error(result.error);
-		} else {
-			toast.success("Updated profile succcessfully");
-			navigate("/admin/userList");
+		try {
+			const result = await updateUser(updatedUser).unwrap();
+			if (result) {
+				toast.success("Updated profile succcessfully");
+				navigate("/admin/userList");
+			}
+		} catch (error) {
+			console.log(error);
+			toast.error("Error updating profile");
 		}
 	};
 
@@ -121,10 +131,18 @@ const UserEditScreen = () => {
 							<Form.Label>Membership Plan</Form.Label>
 							<Form.Select aria-label="Default select">
 								<option>{membershipPlan}</option>
-								<option value="CLASSIC">CLASSIC</option>
-								<option value="PREMIUM">PREMIUM</option>
-								<option value="NONE">NONE</option>
+								<option value={MEMBERSHIP_TYPE.CLASSIC}>CLASSIC</option>
+								<option value={MEMBERSHIP_TYPE.PREMIUM}>PREMIUM</option>
+								<option value={MEMBERSHIP_TYPE.NONE}>NONE</option>
 							</Form.Select>
+						</Form.Group>
+						<Form.Group controlId="validTill" className="my-2">
+							<Form.Label>Valid Till:</Form.Label>
+							<Form.Control
+								type="date"
+								value={validTill}
+								onChange={(e) => setValidTill(e.target.value)}
+							/>
 						</Form.Group>
 						<Form.Group controlId="isAdmin" className="my-2">
 							<Form.Check

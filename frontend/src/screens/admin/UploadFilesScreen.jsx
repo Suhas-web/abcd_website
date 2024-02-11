@@ -37,7 +37,7 @@ const UserListScreen = () => {
 									<th>Name</th>
 									<th>Plan</th>
 									<th>
-										<FaFileUpload></FaFileUpload>Upload Training Plan
+										<FaFileUpload></FaFileUpload>Select PDF file
 									</th>
 								</tr>
 							</thead>

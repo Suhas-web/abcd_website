@@ -6,6 +6,7 @@ dotenv.config();
 import userRoutes from "./routes/userRoutes.js";
 import planRoutes from "./routes/planRoutes.js";
 import messagesRoutes from "./routes/messagesRoutes.js";
+import promotionRoutes from "./routes/promotionRoutes.js";
 
 import connection from "./config/db.js";
 connection();
@@ -25,20 +26,21 @@ app.use(cookieParser());
 app.use("/api/users", userRoutes);
 app.use("/api/plans", planRoutes);
 app.use("/api/OTP", messagesRoutes);
+app.use("/api/promotion", promotionRoutes);
 
 const __dirname = path.resolve();
 if (process.env.NODE_ENV === "production") {
-  //set static folder
-  app.use(express.static(path.join(__dirname, "/frontend/build")));
+	//set static folder
+	app.use(express.static(path.join(__dirname, "/frontend/build")));
 
-  //any route not defined will be send to index.html
-  app.use("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
-  );
+	//any route not defined will be send to index.html
+	app.use("*", (req, res) =>
+		res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
+	);
 } else {
-  app.get("/", (req, res) => {
-    res.send("API running");
-  });
+	app.get("/", (req, res) => {
+		res.send("API running");
+	});
 }
 
 app.use(notFound);

@@ -58,7 +58,9 @@ const UserListScreen = () => {
 									<th>UserId</th>
 									<th>NAME</th>
 									<th>Mobile Number</th>
+									<th>Email</th>
 									<th>Active Plan</th>
+									<th>Valid till</th>
 									<th>isAdmin</th>
 									<th>Edit Profile</th>
 									<th></th>
@@ -71,7 +73,13 @@ const UserListScreen = () => {
 											<td>{user._id}</td>
 											<td>{user.name}</td>
 											<td>{user.mobile}</td>
+											<td>{user.email}</td>
 											<td>{user.membershipPlan}</td>
+											<td>
+												{user.validTill
+													? new Date(user.validTill).toLocaleDateString("en-IN")
+													: "Not found"}
+											</td>
 											<td>
 												{user.isAdmin ? (
 													<FaCheck color="green"></FaCheck>

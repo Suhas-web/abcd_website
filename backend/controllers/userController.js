@@ -9,6 +9,10 @@ const authUser = errorHandler(async (req, res) => {
 	const { mobile, password } = req.body;
 	const user = await User.findOne({ mobile: mobile });
 	if (user && (await user.matchPassword(password))) {
+		if (user.validTill < Date.now()) {
+			user.membershipPlan = "NONE";
+			user.save();
+		}
 		generateToken(res, user._id);
 		res.json({
 			_id: user._id,
@@ -205,9 +209,12 @@ const getUserById = errorHandler(async (req, res) => {
 const updateUser = errorHandler(async (req, res) => {
 	const user = await User.findById({ _id: req.params.id });
 	if (user) {
-		const userExist = await User.findOne({ mobile: req.body.mobile });
-		if (userExist && userExist.length > 0) {
-			console.log(userExist);
+		const userMobileExist = await User.findOne({ mobile: req.body.mobile });
+		const userEmailExist = await User.findOne({ email: req.body.email });
+		if (
+			(userMobileExist && userMobileExist.length > 0) ||
+			(userEmailExist && userEmailExist).length > 0
+		) {
 			res.status(400);
 			throw new Error("User already exists");
 		} else {
@@ -216,7 +223,7 @@ const updateUser = errorHandler(async (req, res) => {
 			user.email = req.body.email || user.email;
 			user.isAdmin = Boolean(req.body.isAdmin);
 			user.membershipPlan = req.body.membershipPlan || user.membershipPlan;
-			user.validTill = user.validTill;
+			user.validTill = req.body.validTill || user.validTill;
 
 			try {
 				const updatedUser = await user.save();
