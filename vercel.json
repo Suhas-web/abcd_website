@@ -2,14 +2,5 @@
   "version": 2,
   "name": "abcd_web",
   "builds": [{"src": "backend/server.js", "use": "@vercel/node"}],
-  "routes": [{"src": "/(.*)", "dest": "/backend/server.js"}],
-   "functions": {
-    "preBuild": {
-      "npm": {
-        "ci": false,
-        "scripts": ["run", "build"]
-      }
-    },
-    "output": "/frontend"
-  }
+  "routes": [{"src": "/(.*)", "dest": "/backend/server.js"}]
 }

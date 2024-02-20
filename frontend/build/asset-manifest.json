@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/static/css/main.1bbebc31.css",
+    "main.js": "/static/js/main.1964eef8.js",
+    "static/media/carousal-1.PNG": "/static/media/carousal-1.8ec14beb084a62e2713d.PNG",
+    "static/media/classicPlan.pdf": "/static/media/classicPlan.3f5e8c469e996c8208f3.pdf",
+    "static/media/dumbbells.jpg": "/static/media/dumbbells.4d4321a4238b7ac01823.jpg",
+    "static/media/equipments.jpg": "/static/media/equipments.3715b8659324256112b5.jpg",
+    "static/media/person_working_out.jpg": "/static/media/person_working_out.1603c9f337d63d5da6f4.jpg",
+    "static/media/maruti.webp": "/static/media/maruti.521dd777a95c85efdab2.webp",
+    "index.html": "/index.html",
+    "main.1bbebc31.css.map": "/static/css/main.1bbebc31.css.map",
+    "main.1964eef8.js.map": "/static/js/main.1964eef8.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1bbebc31.css",
+    "static/js/main.1964eef8.js"
+  ]
+}
