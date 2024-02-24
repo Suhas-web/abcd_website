@@ -1,20 +1,29 @@
 import errorHandler from "../middleware/errorHandler.js";
 import { google } from "googleapis";
-// import apiKey from "../apiKey.json" assert { type: "json" };
 import { Readable } from "stream";
 const SCOPE = ["https://www.googleapis.com/auth/drive"];
-const parentId = ["1VrfmDyqxcI5xrPxq_sEZrcZ_7Cep1IZV"];
+const parentId = ["1VrfmDyqxcI5xrPxq_sEZrcZ_7Cep1IZV"]; //TODO: read from .env
+const classicParentId = ["1pERUZXFLvvTqkNsCscI-8wav6qjxcGWZ"];
 
 //FUNCTIONS START
 // A Function that can provide access to google drive api
+let cachedAuth = null;
+
 const authorize = async () => {
+	if (cachedAuth) {
+		return cachedAuth;
+	}
+
 	const jwtClient = new google.auth.JWT(
 		process.env.GOOGLE_CLIENT_EMAIL,
 		null,
 		process.env.GOOGLE_PRIVATE_KEY,
 		SCOPE
 	);
+
 	await jwtClient.authorize();
+	cachedAuth = jwtClient;
+
 	return jwtClient;
 };
 
@@ -24,7 +33,7 @@ async function uploadFile(authClient, request) {
 	const buffer = await request.file.buffer;
 	return new Promise((resolve, rejected) => {
 		var fileMetaData = {
-			name: `${request.body.userName}.pdf`,
+			name: `${request.body.userName}_${request.file.originalname}`,
 			parents: parentId,
 		};
 		drive.files.create(
@@ -46,24 +55,26 @@ async function uploadFile(authClient, request) {
 	});
 }
 
-async function getFileId(auth, fileName) {
+async function getFileId(auth, fileName, isClassic = false) {
+	console.log("Filename, isClassic", fileName, isClassic);
 	const drive = google.drive({ version: "v3", auth: auth });
 	const res = await drive.files.list({
 		auth: auth,
-		q: `name='${fileName}.pdf' and '${parentId}' in parents and trashed = false`,
+		q:
+			isClassic === true
+				? `'${classicParentId}' in parents and trashed = false`
+				: `'${parentId}' in parents and trashed = false and name contains '${fileName}_'`,
 		fields:
 			"files(id, name, mimeType, parents, webViewLink, size, createdTime)",
 		orderBy: "createdTime desc",
 	});
-
-	//    q: `name='${fileName}' and '${parentId}' in parents and trashed = false`,
 
 	if (res.data.files.length === 0) {
 		console.log("No files found.");
 		return null;
 	} else {
 		res.data.files.map((file) => console.log(file));
-		return res.data.files[0];
+		return isClassic ? res.data.files : res.data.files[0];
 	}
 }
 
@@ -93,7 +104,7 @@ const getPlan = errorHandler(async (req, res) => {
 					console.log("Done downloading file.");
 				})
 				.on("error", (err) => {
-					console.error("Error downloading file.");
+					console.error("Error downloading file.", err);
 				})
 				.pipe(res); // pipe the stream data to the PDF document
 			res.status(200);
@@ -125,4 +136,26 @@ const uploadPlan = errorHandler(async (req, res) => {
 	}
 });
 
-export { uploadPlan, getPlan };
+//desc: Get all plans
+//endpoint: POST /api/plans/history
+//Access: Private
+const getPlanList = errorHandler(async (req, res) => {
+	console.log("isClassic: ", req.query?.isClassic);
+	const isClassic = req.query?.isClassic;
+	console.log("Filename: ", req.user._id.toString());
+	const fileName = isClassic ? req.user._id.toString() : null;
+	try {
+		const auth = await authorize();
+		const files = await getFileId(auth, fileName, isClassic);
+		if (files && files.length > 0) {
+			return res.status(200).json({ fileList: files });
+		} else {
+			return res.status(404);
+		}
+	} catch (err) {
+		console.log(err);
+		return res.status(500);
+	}
+});
+
+export { uploadPlan, getPlan, getPlanList };

@@ -32,7 +32,6 @@ const Header = () => {
 				<Container>
 					<LinkContainer to="/">
 						<Navbar.Brand>
-							{" "}
 							<img src={abcd_logo} alt="abcd_gym"></img>
 						</Navbar.Brand>
 					</LinkContainer>
@@ -40,9 +39,16 @@ const Header = () => {
 					<Navbar.Collapse id="basic-nabar-nav">
 						<Nav className="ms-auto">
 							{userInfo && !userInfo.isAdmin && (
-								<LinkContainer to="/users/trainingPlan">
-									<Nav.Link>Training Plan</Nav.Link>
-								</LinkContainer>
+								<>
+									<LinkContainer to="/users/trainingPlan">
+										<Nav.Link>Training Plan</Nav.Link>
+									</LinkContainer>
+									{userInfo.membershipPlan === "PREMIUM" && (
+										<LinkContainer to="/users/myPlans">
+											<Nav.Link>My Plans</Nav.Link>
+										</LinkContainer>
+									)}
+								</>
 							)}
 
 							{userInfo && userInfo.isAdmin && (

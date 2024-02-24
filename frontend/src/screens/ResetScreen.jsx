@@ -37,8 +37,6 @@ const ResetScreen = () => {
 
 	const handleOtpStatus = ({ status, userId }) => {
 		if (status) {
-			console.log(status);
-			console.log(userId);
 			setIsOtpVerified(true);
 			setUserId(userId);
 		} else {

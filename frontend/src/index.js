@@ -24,6 +24,7 @@ import UploadFilesScreen from "./screens/admin/UploadFilesScreen";
 import ResetScreen from "./screens/ResetScreen";
 import CreateNewUser from "./screens/admin/CreateNewUser";
 import Newsletter from "./screens/admin/Newsletter";
+import MyPlans from "./screens/MyPlans";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const router = createBrowserRouter(
@@ -76,6 +77,7 @@ const router = createBrowserRouter(
 					path="/users/trainingPlan"
 					element={<TrainingPlanScreen />}
 				></Route>
+				<Route path="/users/myPlans" element={<MyPlans />}></Route>
 			</Route>
 		</Route>
 	)
