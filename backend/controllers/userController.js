@@ -9,7 +9,7 @@ const authUser = errorHandler(async (req, res) => {
 	const { mobile, password } = req.body;
 	const user = await User.findOne({ mobile: mobile });
 	if (user && (await user.matchPassword(password))) {
-		if (user.validTill < Date.now()) {
+		if (user.validTill && user.validTill < Date.now()) {
 			user.membershipPlan = "NONE";
 			user.save();
 		}
