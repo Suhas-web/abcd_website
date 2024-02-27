@@ -28,10 +28,16 @@ const plansApiSlice = apiSlice.injectEndpoints({
 			}),
 		}),
 		getClassicPlanList: builder.query({
-			query: ({ isClassic }) => ({
+			query: () => ({
+				url: `${PLANS_URL}/classic`,
+				method: "GET",
+				credentials: "include",
+			}),
+		}),
+		getPlanList: builder.query({
+			query: () => ({
 				url: `${PLANS_URL}/history`,
 				method: "GET",
-				params: `isClassic=${isClassic}`,
 				credentials: "include",
 			}),
 		}),
@@ -42,4 +48,5 @@ export const {
 	useUploadPlanMutation,
 	useDownloadPlanMutation,
 	useGetClassicPlanListQuery,
+	useGetPlanListQuery,
 } = plansApiSlice;

@@ -55,15 +55,30 @@ async function uploadFile(authClient, request) {
 	});
 }
 
-async function getFileId(auth, fileName, isClassic = false) {
-	console.log("Filename, isClassic", fileName, isClassic);
+const getClassicPlan = errorHandler(async (req, res) => {
+	try {
+		const auth = await authorize();
+		const query = `'${classicParentId}' in parents and trashed = false`;
+
+		const files = await getFileId(auth, query);
+		if (files && files.length > 0) {
+			files.map((file) => console.log(file));
+			res.status(200).json({ files });
+		} else {
+			console.log("No files found.");
+			res.status(404).send("PDF Not found");
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(500).send(`Server error: ${error}`);
+	}
+});
+
+async function getFileId(auth, query) {
 	const drive = google.drive({ version: "v3", auth: auth });
 	const res = await drive.files.list({
 		auth: auth,
-		q:
-			isClassic === true
-				? `'${classicParentId}' in parents and trashed = false`
-				: `'${parentId}' in parents and trashed = false and name contains '${fileName}_'`,
+		q: query,
 		fields:
 			"files(id, name, mimeType, parents, webViewLink, size, createdTime)",
 		orderBy: "createdTime desc",
@@ -74,7 +89,7 @@ async function getFileId(auth, fileName, isClassic = false) {
 		return null;
 	} else {
 		res.data.files.map((file) => console.log(file));
-		return isClassic ? res.data.files : res.data.files[0];
+		return res.data.files;
 	}
 }
 
@@ -86,8 +101,14 @@ const getPlan = errorHandler(async (req, res) => {
 	try {
 		const auth = await authorize();
 		const drive = google.drive({ version: "v3", auth: auth });
-		console.log("req.params.id", req.params.id);
-		const file = await getFileId(auth, req.params.id);
+		const query = `'${parentId}' in parents and trashed = false and name contains '${req.params.id}_'`;
+		console.log("Download query: ", query);
+		const files = await getFileId(auth, query);
+		if (!files) {
+			return res.status(404).send("File not found");
+		}
+		const file = files.at(0);
+		console.log("Start download File: ", file);
 		if (file) {
 			console.log("filesResponse ID", file);
 			const driveResponse = await drive.files.get(
@@ -136,26 +157,28 @@ const uploadPlan = errorHandler(async (req, res) => {
 	}
 });
 
-//desc: Get all plans
+//desc: Get all plans for premium users
 //endpoint: POST /api/plans/history
 //Access: Private
 const getPlanList = errorHandler(async (req, res) => {
-	console.log("isClassic: ", req.query?.isClassic);
-	const isClassic = req.query?.isClassic;
-	console.log("Filename: ", req.user._id.toString());
-	const fileName = isClassic ? req.user._id.toString() : null;
+	const fileName = req.user._id.toString();
 	try {
 		const auth = await authorize();
-		const files = await getFileId(auth, fileName, isClassic);
+		const query = `'${parentId}' in parents and trashed = false and name contains '${fileName}_'`;
+		console.log("Query: ", query);
+		const files = await getFileId(auth, query);
+
 		if (files && files.length > 0) {
+			console.log("Files in gdrive: ", files, files.length);
 			return res.status(200).json({ fileList: files });
 		} else {
-			return res.status(404);
+			console.log("Files in gdrive: ", files);
+			return res.status(404).send("No files found");
 		}
 	} catch (err) {
 		console.log(err);
-		return res.status(500);
+		return res.status(500).send("Error occured: ", err);
 	}
 });
 
-export { uploadPlan, getPlan, getPlanList };
+export { uploadPlan, getPlan, getPlanList, getClassicPlan };

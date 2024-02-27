@@ -3,7 +3,7 @@ import { pdfjs } from "react-pdf";
 import { useSelector } from "react-redux";
 import { Container } from "react-bootstrap";
 import PremiumPlan from "../components/PremiumPlan";
-import PlanHistory from "../components/PlanHistory";
+import ClassicPlan from "../components/ClassicPlan";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -11,7 +11,7 @@ const TrainingPlanScreen = () => {
 	const { userInfo } = useSelector((state) => state.auth);
 
 	return userInfo.membershipPlan === "CLASSIC" ? (
-		<PlanHistory isClassic={true} />
+		<ClassicPlan />
 	) : userInfo.membershipPlan === "PREMIUM" ? (
 		<PremiumPlan />
 	) : (

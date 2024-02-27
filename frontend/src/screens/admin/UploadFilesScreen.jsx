@@ -30,7 +30,7 @@ const UserListScreen = () => {
 				) : (
 					<>
 						<SearchBox url="/admin/uploadFiles" />
-						<Table variant="dark" striped hover responsive className="table-sm">
+						<Table striped hover responsive className="table-sm">
 							<thead>
 								<tr>
 									<th>UserId</th>

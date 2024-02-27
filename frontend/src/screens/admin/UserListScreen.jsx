@@ -38,9 +38,7 @@ const UserListScreen = () => {
 			<Container>
 				<h1>{title}</h1>
 				<Link to="/admin/createUser">
-					<Button variant="light" className="btn-sm">
-						Add user
-					</Button>
+					<Button className="btn-sm">Add user</Button>
 				</Link>
 				<SearchBox url="/admin/userList" />
 				{loadingDelete && <Loader />}
@@ -52,7 +50,7 @@ const UserListScreen = () => {
 					</Message>
 				) : (
 					<>
-						<Table variant="dark" striped hover responsive className="table-sm">
+						<Table striped hover responsive className="table-sm">
 							<thead>
 								<tr>
 									<th>UserId</th>

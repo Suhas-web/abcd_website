@@ -8,6 +8,7 @@ import {
 	uploadPlan,
 	getPlan,
 	getPlanList,
+	getClassicPlan,
 } from "../controllers/plansController.js";
 
 const router = express.Router();
@@ -17,6 +18,6 @@ router
 	.post(userAuthentication, adminAuthentication, uploadFile, uploadPlan);
 
 router.route("/retrieveFile/:id").post(userAuthentication, getPlan);
-
+router.route("/classic").get(userAuthentication, getClassicPlan);
 router.route("/history").get(userAuthentication, getPlanList);
 export default router;
