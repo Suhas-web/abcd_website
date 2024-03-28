@@ -1,0 +1,22 @@
+.welcome-to-gym {
+    text-align: center; /* Center align the text */
+    margin-top: 50px; /* Add some top margin for spacing */
+    color: rgb(78, 17, 10);
+  }
+  
+  .slide-in {
+    animation: slideIn 1s ease forwards; /* Apply the slideIn animation */
+    opacity: 0; /* Initially hide the text */
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateX(-100%); /* Start off-screen to the left */
+      opacity: 0; /* Start with opacity 0 */
+    }
+    to {
+      transform: translateX(0); /* Slide to the center */
+      opacity: 1; /* Show the text */
+    }
+  }
+  

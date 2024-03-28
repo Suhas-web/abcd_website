@@ -1,6 +1,5 @@
 import "../App.css";
 import { Row, Col, CardGroup, Card, Image } from "react-bootstrap";
-import maruti from "../assets/maruti.webp";
 
 const AboutUs = () => {
 	return (
@@ -10,7 +9,7 @@ const AboutUs = () => {
 				<Col md={2}></Col>
 				<Col md={8}>
 					<h2 className="text-center">Motto</h2>
-					<p className="quotes">
+					<p>
 						We at abcd impart the most appropriate & scientific way of exercise
 						and training for strength. Get the right fitness education to
 						understand all that goes into a healthy fitness lifestyle.
@@ -26,7 +25,7 @@ const AboutUs = () => {
 				<Col md={2}></Col>
 				<Col md={8}>
 					<h2 className="text-center">My Story</h2>
-					<p className="quotes">
+					<p>
 						Hi, I am Adarsh. I am a Fitness coach, Educator & the Founder of
 						Adarsh Barbell Club Dharwad (ABCD) – The School of Fitness. Adarsh
 						Barbell Club Dharwad, was born out of my passion towards Barbell
