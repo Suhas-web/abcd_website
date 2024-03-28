@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.6bd7c9b7.css",
-    "main.js": "/static/js/main.0bdcfc54.js",
+    "main.css": "/static/css/main.b5944392.css",
+    "main.js": "/static/js/main.2bf19682.js",
     "static/media/carousal-1.PNG": "/static/media/carousal-1.8ec14beb084a62e2713d.PNG",
     "static/media/Boris.jpg": "/static/media/Boris.e5a8e893cae3e021e1d0.jpg",
     "static/media/Pooja Y_A.jpg": "/static/media/Pooja Y_A.6ed27573c79266ebb49f.jpg",
@@ -15,11 +15,11 @@
     "static/media/person_working_out.jpg": "/static/media/person_working_out.1603c9f337d63d5da6f4.jpg",
     "static/media/Adeep.JPG": "/static/media/Adeep.77cf2e296ce5987a9705.JPG",
     "index.html": "/index.html",
-    "main.6bd7c9b7.css.map": "/static/css/main.6bd7c9b7.css.map",
-    "main.0bdcfc54.js.map": "/static/js/main.0bdcfc54.js.map"
+    "main.b5944392.css.map": "/static/css/main.b5944392.css.map",
+    "main.2bf19682.js.map": "/static/js/main.2bf19682.js.map"
   },
   "entrypoints": [
-    "static/css/main.6bd7c9b7.css",
-    "static/js/main.0bdcfc54.js"
+    "static/css/main.b5944392.css",
+    "static/js/main.2bf19682.js"
   ]
 }
