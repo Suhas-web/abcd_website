@@ -58,7 +58,7 @@ const OTPScreen = ({
 			setOtpSource(OTP_SOURCE.NONE);
 			setTitle("Contact Admin for updating your information");
 		}
-	}, [data, mobile, phone, mail, otpSource]);
+	}, [data, phone, mail, otpSource]);
 
 	const sendOTPHandler = useCallback(
 		async (e, source) => {
