@@ -44,6 +44,8 @@ const OTPScreen = ({
 			setOtpSource(data.method);
 			setTitle("Verify your contact through OTP");
 			if (otpSource === OTP_SOURCE.BOTH) {
+				console.log("UseEffect Updated Mobile:", mobile);
+				console.log("UseEffect Updated Email:", email);
 				setMobile(phone);
 				setEmail(mail);
 			} else if (mail && otpSource === OTP_SOURCE.EMAIL) {
@@ -139,7 +141,7 @@ const OTPScreen = ({
 										<Form.Control
 											type="text"
 											placeholder="Enter Mobile Number"
-											value={mobile}
+											value={mobile || ""}
 											onChange={(e) => setMobile(e.target.value)}
 											required
 											pattern="^[6-9]\d{9}$"
@@ -158,7 +160,7 @@ const OTPScreen = ({
 										<Form.Control
 											type="email"
 											placeholder="Enter email"
-											value={email}
+											value={email || ""}
 											onChange={(e) => setEmail(e.target.value)}
 											required
 										></Form.Control>
@@ -243,6 +245,8 @@ const OTPScreen = ({
 				toast.error("Invalid mobile number");
 				setSelectedMethod(null);
 			}
+		} else {
+			toast.error("Please try again");
 		}
 	};
 
@@ -256,6 +260,8 @@ const OTPScreen = ({
 				toast.error("Invalid email");
 				setSelectedMethod(null);
 			}
+		} else {
+			toast.error("Please try again");
 		}
 	};
 

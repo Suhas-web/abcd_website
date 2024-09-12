@@ -10,9 +10,9 @@ const ClassicPlan = () => {
 	const [list, setList] = useState([]);
 
 	useEffect(() => {
-		if (data && data.fileList) {
+		if (data && data.files) {
 			console.log("Data: ", data);
-			setList(data.fileList);
+			setList(data.files);
 		}
 	}, [data, list]);
 	return (

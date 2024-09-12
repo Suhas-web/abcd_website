@@ -2,8 +2,8 @@ import errorHandler from "../middleware/errorHandler.js";
 import { google } from "googleapis";
 import { Readable } from "stream";
 const SCOPE = ["https://www.googleapis.com/auth/drive"];
-const parentId = ["1VrfmDyqxcI5xrPxq_sEZrcZ_7Cep1IZV"]; //TODO: read from .env
-const classicParentId = ["1pERUZXFLvvTqkNsCscI-8wav6qjxcGWZ"];
+const parentId = [process.env.PREMIUM_FOLDER_ID];
+const classicParentId = [process.env.CLASSIC_FOLDER_ID];
 
 //FUNCTIONS START
 // A Function that can provide access to google drive api
