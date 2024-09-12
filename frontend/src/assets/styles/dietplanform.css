@@ -1,0 +1,68 @@
+.diet-plan-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group input[type="text"] {
+  margin-right: 10px;
+  padding: 8px;
+  width: calc(100% - 80px);
+}
+
+.form-group button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #45a049;
+}
+
+.diet-plan-result {
+  margin-top: 20px;
+}
+
+.form-group ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.form-group ul li {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 5px 0;
+}
+
+.form-group ul li button {
+  margin-left: 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-group ul li button:hover {
+  background-color: #c0392b;
+}

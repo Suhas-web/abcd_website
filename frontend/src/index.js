@@ -25,6 +25,7 @@ import ResetScreen from "./screens/ResetScreen";
 import CreateNewUser from "./screens/admin/CreateNewUser";
 import Newsletter from "./screens/admin/Newsletter";
 import MyPlans from "./screens/MyPlans";
+import DietPlanPage from "./screens/DietPlanPage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const router = createBrowserRouter(
@@ -78,6 +79,7 @@ const router = createBrowserRouter(
 					element={<TrainingPlanScreen />}
 				></Route>
 				<Route path="/users/myPlans" element={<MyPlans />}></Route>
+				<Route path="/dietPlans" element={<DietPlanPage />}></Route>
 			</Route>
 		</Route>
 	)

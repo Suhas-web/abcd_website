@@ -41,12 +41,17 @@ const Header = () => {
 							{userInfo && !userInfo.isAdmin && (
 								<>
 									<LinkContainer to="/users/trainingPlan">
-										<Nav.Link>Training Plan</Nav.Link>
+										<Nav.Link>Current Training Plan</Nav.Link>
 									</LinkContainer>
 									{userInfo.membershipPlan === "PREMIUM" && (
-										<LinkContainer to="/users/myPlans">
-											<Nav.Link>My Plans</Nav.Link>
-										</LinkContainer>
+										<>
+											<LinkContainer to="/users/myPlans">
+												<Nav.Link>Training Plan History</Nav.Link>
+											</LinkContainer>
+											<LinkContainer to="/dietPlans">
+												<NavLink>Custom Diet Plan</NavLink>
+											</LinkContainer>
+										</>
 									)}
 								</>
 							)}
